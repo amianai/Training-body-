@@ -7,6 +7,7 @@ import { CategoryBadge } from '@/components/CategoryBadge'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { ExerciseFigure } from '@/components/ExerciseFigure'
 import { ExerciseSheet } from '@/components/ExerciseSheet'
+import { VoiceToggle } from '@/components/VoiceToggle'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Textarea } from '@/components/ui/textarea'
@@ -18,6 +19,8 @@ import { useStats, useToday, useWakeLock } from '@/lib/hooks'
 import { buildSteps, targetLabel, workStepCount, type RestStep, type WorkStep } from '@/lib/session'
 import { beep, vibrate } from '@/lib/signals'
 import { cn } from '@/lib/utils'
+import { speak, stopSpeaking } from '@/lib/voice'
+import { DONE_PHRASE, spokenIntro, type Spoken } from '@/lib/voiceScript'
 import { useAppStore } from '@/store/useAppStore'
 
 /** Conto alla rovescia basato sull'orario, così non perde tempo se il browser rallenta i timer. */
@@ -90,12 +93,14 @@ function WorkView({
   onTogglePause,
   onDone,
   onInfo,
+  intro,
 }: {
   step: WorkStep
   paused: boolean
   onTogglePause: () => void
   onDone: () => void
   onInfo: (exercise: Exercise) => void
+  intro: Spoken
 }) {
   const { exercise } = step
   const timed = step.seconds !== undefined
@@ -103,6 +108,16 @@ function WorkView({
   const color = CATEGORIES[exercise.category].color
   const figureBig = useAppStore((s) => s.settings.figureBig)
   const setSetting = useAppStore((s) => s.setSetting)
+  const voiceOn = useAppStore((s) => s.settings.voice)
+
+  // All'inizio dell'esercizio la voce spiega cosa fare; si zittisce cambiando esercizio o in pausa.
+  useEffect(() => {
+    if (voiceOn) speak(intro.text, intro.calm)
+    return () => stopSpeaking()
+  }, [voiceOn, intro.text, intro.calm])
+  useEffect(() => {
+    if (paused) stopSpeaking()
+  }, [paused])
 
   const figure = (className: string) => (
     <ExerciseFigure
@@ -159,7 +174,8 @@ function WorkView({
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
           {figureBig ? figure('h-full max-h-full w-full') : counter(false)}
         </div>
-        <div className="flex justify-end pt-2">
+        <div className="flex items-end justify-between gap-3 pt-2">
+          <VoiceToggle />
           <button
             type="button"
             onClick={() => setSetting('figureBig', !figureBig)}
@@ -276,6 +292,11 @@ function DoneView({ entry, exerciseCount }: { entry: Entry; exerciseCount: numbe
   const current = useAppStore((s) => s.entries.find((e) => e.id === entry.id)) ?? entry
   const updateEntry = useAppStore((s) => s.updateEntry)
   const [noteOpen, setNoteOpen] = useState(false)
+  const voiceOn = useAppStore((s) => s.settings.voice)
+
+  useEffect(() => {
+    if (voiceOn) speak(DONE_PHRASE)
+  }, [voiceOn])
 
   useEffect(() => {
     const colors = ['#c5f82a', '#ff7a1a', '#ffffff']
@@ -397,6 +418,16 @@ export function SessionScreen() {
   const doneWork = steps.slice(0, index).filter((s) => s.kind === 'work').length
   const nextWork = steps.slice(index + 1).find((s): s is WorkStep => s.kind === 'work')
   const paused = userPaused || exitDialogOpen || info !== null
+  const previousWork = steps.slice(0, index).filter((s): s is WorkStep => s.kind === 'work')
+  const intro =
+    step.kind === 'work'
+      ? spokenIntro(
+          step,
+          previousWork.at(-1),
+          !previousWork.some((s) => s.exercise.id === step.exercise.id),
+          previousWork.length,
+        )
+      : null
 
   const signal = (times: number) => {
     if (settings.sound) beep(times)
@@ -476,6 +507,7 @@ export function SessionScreen() {
             goTo(index + 1)
           }}
           onInfo={setInfo}
+          intro={intro!}
         />
       ) : (
         <RestView

@@ -18,6 +18,8 @@ export interface Settings {
   vibration: boolean
   /** Durante l'esercizio l'omino è grande e il tempo piccolo (si sceglie toccando l'angolo). */
   figureBig: boolean
+  /** Voce guida che legge come si fa ogni esercizio. */
+  voice: boolean
 }
 
 interface PersistedState {
@@ -53,7 +55,7 @@ function initialState(): PersistedState {
     startDate: todayISO(),
     entries: [],
     active: null,
-    settings: { sound: false, vibration: false, figureBig: false },
+    settings: { sound: false, vibration: false, figureBig: false, voice: true },
     demo: null,
   }
 }
@@ -126,6 +128,11 @@ export const useAppStore = create<AppState>()(
     {
       name: 'allenamento',
       version: 1,
+      // Le impostazioni nuove prendono il valore di partenza anche per chi ha già dati salvati.
+      merge: (persisted, current) => {
+        const saved = (persisted ?? {}) as Partial<PersistedState>
+        return { ...current, ...saved, settings: { ...current.settings, ...saved.settings } }
+      },
       partialize: (s): PersistedState => ({
         startDate: s.startDate,
         entries: s.entries,

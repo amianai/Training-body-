@@ -65,6 +65,11 @@ export function SettingsScreen() {
           control={<Switch checked={settings.sound} onCheckedChange={(v) => setSetting('sound', v)} />}
         />
         <Row
+          title="Voce guida"
+          description="All'inizio di ogni esercizio legge come si fa. Si spegne anche dall'altoparlante durante l'allenamento."
+          control={<Switch checked={settings.voice} onCheckedChange={(v) => setSetting('voice', v)} />}
+        />
+        <Row
           title="Vibrazione a fine timer"
           control={<Switch checked={settings.vibration} onCheckedChange={(v) => setSetting('vibration', v)} />}
         />
