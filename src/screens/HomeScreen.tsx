@@ -8,7 +8,7 @@ import { WeekDots } from '@/components/WeekDots'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { getSession } from '@/data/plan'
+import { PLAN, getSession } from '@/data/plan'
 import type { Entry, Session } from '@/data/types'
 import { formatDuration, formatLong } from '@/lib/dates'
 import { useStats } from '@/lib/hooks'
@@ -90,7 +90,7 @@ export function HomeScreen() {
     return () => window.clearTimeout(timer)
   }, [flash, navigate])
 
-  const session = getSession(stats.nextSessionId) ?? getSession('a')!
+  const session = getSession(stats.nextSessionId) ?? PLAN.sessions[0]
   const summary = useSessionSummary(session)
   const activeSession = active ? getSession(active.sessionId) : undefined
   const activeTotal = useMemo(

@@ -8,7 +8,7 @@ import { ScreenHeader } from '@/components/ScreenHeader'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { getExercise } from '@/data/exercises'
-import { PLAN, PRACTICE } from '@/data/plan'
+import { PLAN, PRACTICE, getSession } from '@/data/plan'
 import type { Exercise } from '@/data/types'
 import { useStats } from '@/lib/hooks'
 import { buildSteps, estimateDurationSec, targetLabel } from '@/lib/session'
@@ -46,7 +46,7 @@ export function PlanScreen() {
         <CardHeader>
           <div className="font-display text-2xl leading-none font-bold uppercase">Prova tutti gli esercizi</div>
           <p className="text-sm text-muted-foreground">
-            I 21 esercizi in fila, pochi secondi l'uno, per vedere come si fanno. Non conta per la streak.
+            Tutti gli esercizi in fila, pochi secondi l'uno, per vedere come si fanno. Non conta per la streak.
           </p>
         </CardHeader>
         <CardContent>
@@ -88,7 +88,10 @@ export function PlanScreen() {
         </ol>
       </section>
 
-      {PLAN.sessions.map((session) => {
+      <h2 className="-mb-2 text-sm font-semibold text-muted-foreground uppercase">
+        Sessioni di questa fase · livello {stats.phase.index + 1}
+      </h2>
+      {stats.phase.phase.rotation.flatMap((id) => getSession(id) ?? []).map((session) => {
         const minutes = Math.round(estimateDurationSec(buildSteps(session)) / 60)
         const isNext = session.id === stats.nextSessionId
         return (

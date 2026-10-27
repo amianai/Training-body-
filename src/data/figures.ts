@@ -157,6 +157,15 @@ export const FIGURES: Record<string, FigureSpec> = {
     phases: ['Cammina', 'Cammina', 'Cammina', 'Cammina'],
     decor: [{ kind: 'bags' }],
   },
+  e4: {
+    frames: [
+      { root: [0.45, G - 0.02], anchor: 'ankle', torso: 270, neck: 275, legs: [STAND, STAND], arms: [{ a: 60, b: 350, c: 330 }, { a: 65, b: 352, c: 30 }] },
+      { root: [0.45, G - 0.02], anchor: 'ankle', torso: 270, neck: 275, legs: [STAND, STAND], arms: [{ a: 60, b: 350, c: 30 }, { a: 65, b: 352, c: 330 }] },
+    ],
+    hold: [0.1, 0.1],
+    move: 0.5,
+    phases: ['Strizza', 'Strizza', 'Strizza', 'Strizza'],
+  },
   e11: {
     frames: [
       { root: [0.48, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, { a: 0, b: 90, c: 15 }], arms: [{ a: 60, b: 30, c: 30 }, { a: 120, b: 150, c: 150 }] },
@@ -218,6 +227,30 @@ export const FIGURES: Record<string, FigureSpec> = {
     hold: [0.5, 0.5],
     move: 1.2,
     phases: ['Pronto', 'Allunga', 'Tieni', 'Torna'],
+  },
+  f13: {
+    frames: [
+      { root: [0.45, 0.82], anchor: 'hip', torso: 0, neck: 335, legs: [{ a: 180, b: 180, c: 180 }, { a: 180, b: 180, c: 180 }], arms: [{ a: 10, b: 5, c: 5 }, { a: 10, b: 5, c: 5 }] },
+      { root: [0.45, 0.82], anchor: 'hip', torso: 352, neck: 320, legs: [{ a: 188, b: 188, c: 188 }, { a: 188, b: 188, c: 188 }], arms: [{ a: 357, b: 355, c: 355 }, { a: 357, b: 355, c: 355 }] },
+    ],
+    hold: [0.4, 0.8],
+    move: 0.9,
+    phases: ['Giù', 'Su', 'Tieni', 'Giù'],
+  },
+  f14: {
+    frames: [
+      { root: [0.88, 0.83], anchor: 'ankle', torso: 192, neck: 195, legs: [{ a: 15, b: 15, c: 300 }, { a: 15, b: 15, c: 300 }], arms: [{ target: [0.13, 0.356], bend: 1, c: 200 }, { target: [0.13, 0.356], bend: 1, c: 200 }] },
+      { root: [0.88, 0.83], anchor: 'ankle', torso: 205, neck: 208, legs: [{ a: 25, b: 25, c: 300 }, { a: 25, b: 25, c: 300 }], arms: [{ target: [0.13, 0.356], bend: 1, c: 200 }, { target: [0.13, 0.356], bend: 1, c: 200 }] },
+    ],
+    hold: [0.4, 0.4],
+    move: 1,
+    phases: ['Giù', 'Tira', 'Su', 'Scendi'],
+    decor: [
+      { kind: 'line', a: [-0.08, 0.34], b: [0.36, 0.34], tone: 'prop' },
+      { kind: 'line', a: [-0.06, 0.34], b: [-0.06, G], tone: 'prop' },
+    ],
+    key: 'elbow',
+    trace: 'shoulder',
   },
   f11: {
     frames: [

@@ -9,7 +9,7 @@ export const CATEGORIES: Record<Category, { label: string; color: string }> = {
 
 /**
  * Libreria degli esercizi, presa dalla ricerca sull'enduro.
- * Per ora solo quelli fattibili senza attrezzi (o con oggetti di casa).
+ * Per ora solo quelli fattibili senza attrezzi (o con oggetti di casa: borse, asciugamano, tavolo).
  */
 export const EXERCISES: Exercise[] = [
   // Stretching
@@ -163,6 +163,16 @@ export const EXERCISES: Exercise[] = [
     equipment: 'Due borse pesanti (poi manubri)',
   },
   {
+    id: 'e4',
+    name: "Strizza l'asciugamano",
+    nameEn: 'Towel wring',
+    category: 'enduro',
+    kind: 'time',
+    cues: ["Asciugamano arrotolato, una mano accanto all'altra", 'Strizza come per farlo gocciolare, poi cambia verso'],
+    why: 'Presa e avambracci senza attrezzi: lavorano come su gas e manubrio.',
+    equipment: 'Un asciugamano',
+  },
+  {
     id: 'e11',
     name: 'Appoggio su una gamba',
     nameEn: 'Single-leg stance',
@@ -221,6 +231,25 @@ export const EXERCISES: Exercise[] = [
     perSide: true,
     cues: ['Sdraiato, braccia in alto e ginocchia a 90°', 'Allunga braccio e gamba opposti, schiena incollata a terra'],
     why: 'Core che resiste ai colpi senza inarcare la schiena.',
+  },
+  {
+    id: 'f13',
+    name: 'Superman',
+    nameEn: 'Superman',
+    category: 'flex',
+    kind: 'reps',
+    cues: ['A pancia in giù, braccia avanti', 'Solleva braccia e gambe insieme, tieni 2 secondi, giù piano'],
+    why: 'Schiena bassa e glutei: reggono il busto quando sei in piedi sulla moto.',
+  },
+  {
+    id: 'f14',
+    name: 'Rematore inverso al tavolo',
+    nameEn: 'Inverted row',
+    category: 'flex',
+    kind: 'reps',
+    cues: ['Sdraiato sotto un tavolo robusto, mani sul bordo', 'Corpo dritto, porta il petto verso il bordo, poi scendi piano'],
+    why: 'La schiena che tira: tiene i gomiti alti e regge le braccia sul manubrio.',
+    equipment: 'Un tavolo robusto che non si ribalta',
   },
   {
     id: 'f11',
