@@ -20,6 +20,8 @@ export interface Settings {
   figureBig: boolean
   /** Voce guida che legge come si fa ogni esercizio. */
   voice: boolean
+  /** Voce italiana scelta (nome della voce del telefono); se manca, la più naturale. */
+  voiceName: string | null
 }
 
 interface PersistedState {
@@ -55,7 +57,7 @@ function initialState(): PersistedState {
     startDate: todayISO(),
     entries: [],
     active: null,
-    settings: { sound: false, vibration: false, figureBig: false, voice: true },
+    settings: { sound: false, vibration: false, figureBig: false, voice: true, voiceName: null },
     demo: null,
   }
 }

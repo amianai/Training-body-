@@ -3,6 +3,7 @@ import { Download, FlaskConical, Trash2, Upload } from 'lucide-react'
 
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { ScreenHeader } from '@/components/ScreenHeader'
+import { VoiceSettings } from '@/components/VoiceSettings'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { formatLong, todayISO } from '@/lib/dates'
@@ -69,6 +70,7 @@ export function SettingsScreen() {
           description="All'inizio di ogni esercizio legge come si fa. Si spegne anche dall'altoparlante durante l'allenamento."
           control={<Switch checked={settings.voice} onCheckedChange={(v) => setSetting('voice', v)} />}
         />
+        {settings.voice && <VoiceSettings />}
         <Row
           title="Vibrazione a fine timer"
           control={<Switch checked={settings.vibration} onCheckedChange={(v) => setSetting('vibration', v)} />}

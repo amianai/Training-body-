@@ -19,7 +19,7 @@ import { useStats, useToday, useWakeLock } from '@/lib/hooks'
 import { buildSteps, targetLabel, workStepCount, type RestStep, type WorkStep } from '@/lib/session'
 import { beep, vibrate } from '@/lib/signals'
 import { cn } from '@/lib/utils'
-import { speak, stopSpeaking } from '@/lib/voice'
+import { speak, stopSpeaking, useVoiceStatus } from '@/lib/voice'
 import { DONE_PHRASE, spokenIntro, type Spoken } from '@/lib/voiceScript'
 import { useAppStore } from '@/store/useAppStore'
 
@@ -109,12 +109,14 @@ function WorkView({
   const figureBig = useAppStore((s) => s.settings.figureBig)
   const setSetting = useAppStore((s) => s.setSetting)
   const voiceOn = useAppStore((s) => s.settings.voice)
+  const voiceName = useAppStore((s) => s.settings.voiceName)
+  const voiceMissing = useVoiceStatus(voiceName).kind === 'missing'
 
   // All'inizio dell'esercizio la voce spiega cosa fare; si zittisce cambiando esercizio o in pausa.
   useEffect(() => {
-    if (voiceOn) speak(intro.text, intro.calm)
+    if (voiceOn) speak(intro.text, intro.calm, voiceName)
     return () => stopSpeaking()
-  }, [voiceOn, intro.text, intro.calm])
+  }, [voiceOn, voiceName, intro.text, intro.calm])
   useEffect(() => {
     if (paused) stopSpeaking()
   }, [paused])
@@ -175,7 +177,12 @@ function WorkView({
           {figureBig ? figure('h-full max-h-full w-full') : counter(false)}
         </div>
         <div className="flex items-end justify-between gap-3 pt-2">
-          <VoiceToggle />
+          <div className="flex min-w-0 flex-col items-start gap-1.5">
+            {voiceOn && voiceMissing && (
+              <p className="text-xs text-accent">Manca la voce italiana sul telefono: vedi Impostazioni.</p>
+            )}
+            <VoiceToggle />
+          </div>
           <button
             type="button"
             onClick={() => setSetting('figureBig', !figureBig)}
@@ -293,10 +300,11 @@ function DoneView({ entry, exerciseCount }: { entry: Entry; exerciseCount: numbe
   const updateEntry = useAppStore((s) => s.updateEntry)
   const [noteOpen, setNoteOpen] = useState(false)
   const voiceOn = useAppStore((s) => s.settings.voice)
+  const voiceName = useAppStore((s) => s.settings.voiceName)
 
   useEffect(() => {
-    if (voiceOn) speak(DONE_PHRASE)
-  }, [voiceOn])
+    if (voiceOn) speak(DONE_PHRASE, false, voiceName)
+  }, [voiceOn, voiceName])
 
   useEffect(() => {
     const colors = ['#c5f82a', '#ff7a1a', '#ffffff']
