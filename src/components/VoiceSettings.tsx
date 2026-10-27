@@ -1,16 +1,41 @@
 import { Volume2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { italianVoices, speak, useVoiceStatus } from '@/lib/voice'
+import { getExercise } from '@/data/exercises'
+import { hasRecordings, italianVoices, recordedVoice, say, useVoiceStatus } from '@/lib/voice'
+import { spokenIntro } from '@/lib/voiceScript'
 import { useAppStore } from '@/store/useAppStore'
 
-const SAMPLE = 'Ciao! Sono la tua voce guida. Flessioni, 8 ripetizioni. Mani sotto le spalle, corpo dritto. Vai!'
+/** Come suona la guida alla prima serie di flessioni. */
+const SAMPLE = spokenIntro(
+  { kind: 'work', exercise: getExercise('f1'), reps: 8, blockTitle: 'Circuito', round: 1, rounds: 2 },
+  undefined,
+  true,
+  0,
+)
 
-/** Quale voce italiana usa la guida, prova della voce e cosa fare se il telefono non ne ha. */
+/** Quale voce usa la guida, prova della voce e cosa fare se il telefono non ne ha una italiana. */
 export function VoiceSettings() {
   const voiceName = useAppStore((s) => s.settings.voiceName)
   const setSetting = useAppStore((s) => s.setSetting)
   const status = useVoiceStatus(voiceName)
+
+  const tryButton = (
+    <Button variant="outline" size="lg" onClick={() => say(SAMPLE, voiceName)}>
+      <Volume2 /> Prova la voce
+    </Button>
+  )
+
+  if (hasRecordings) {
+    return (
+      <div className="flex flex-col gap-3 rounded-xl border bg-card p-4">
+        <p className="text-sm text-muted-foreground">
+          Voce registrata: <span className="text-foreground">{recordedVoice}</span>. Funziona anche senza internet.
+        </p>
+        {tryButton}
+      </div>
+    )
+  }
 
   if (status.kind === 'unsupported') {
     return <p className="px-1 text-sm text-muted-foreground">Questo browser non ha la sintesi vocale: apri l'app da Chrome.</p>
@@ -58,9 +83,7 @@ export function VoiceSettings() {
           ))}
         </select>
       )}
-      <Button variant="outline" size="lg" onClick={() => speak(SAMPLE, false, voiceName)}>
-        <Volume2 /> Prova la voce
-      </Button>
+      {tryButton}
     </div>
   )
 }

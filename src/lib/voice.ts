@@ -1,7 +1,20 @@
 import { useSyncExternalStore } from 'react'
 
-// Voce guida con la sintesi vocale del telefono (sul Pixel: le voci italiane di Google, anche offline).
-// Si parla solo con una voce italiana: una voce inglese che legge l'italiano non si capisce.
+import recorded from '@/data/voiceRecorded.json'
+import type { Spoken } from './voiceScript'
+
+// Voce guida: prima le frasi registrate con una voce vera (scripts/voice), poi la sintesi vocale del telefono.
+// Col telefono si parla solo con una voce italiana: una voce inglese che legge l'italiano non si capisce.
+
+/** Frasi registrate: id → testo letto. Un audio vale solo se il testo è ancora quello di oggi. */
+const recordedText: Record<string, string> = recorded.clips
+/** Nome della voce registrata, se c'è. */
+export const recordedVoice: string | null = recorded.voice
+export const hasRecordings = Object.keys(recordedText).length > 0
+
+export function isRecorded(spoken: Spoken): boolean {
+  return spoken.clips.length > 0 && spoken.clips.every((c) => recordedText[c.id] === c.text)
+}
 
 const synth = typeof window !== 'undefined' && 'speechSynthesis' in window ? window.speechSynthesis : null
 let voices: SpeechSynthesisVoice[] = []
@@ -58,9 +71,43 @@ export function useVoiceStatus(preferred?: string | null): VoiceStatus {
   return voiceStatus(preferred)
 }
 
-export const voiceAvailable = synth !== null
+export const voiceAvailable = synth !== null || hasRecordings
 
-/** Legge un testo con la voce italiana, interrompendo quello che stava dicendo. Senza voce italiana tace. */
+/** Pausa tra due frasi registrate, come tra due frasi dette di fila. */
+const GAP_MS = 200
+
+let playing: { cancelled: boolean; audio?: HTMLAudioElement; timer?: number } | null = null
+
+function playClips(spoken: Spoken) {
+  const run: NonNullable<typeof playing> = { cancelled: false }
+  playing = run
+  const audios = spoken.clips.map((c) => {
+    const audio = new Audio(`${import.meta.env.BASE_URL}voce/${c.id}.mp3`)
+    audio.preload = 'auto'
+    return audio
+  })
+  const play = (i: number) => {
+    if (run.cancelled || i >= audios.length) return
+    const audio = audios[i]
+    run.audio = audio
+    audio.onended = () => {
+      run.timer = window.setTimeout(() => play(i + 1), GAP_MS)
+    }
+    audio.onerror = () => play(i + 1)
+    // Se il browser rifiuta l'audio (nessun tocco sulla pagina) la guida resta zitta.
+    audio.play().catch(() => {})
+  }
+  play(0)
+}
+
+/** Dice una frase, interrompendo quella prima: registrata se c'è, altrimenti con la voce italiana del telefono. */
+export function say(spoken: Spoken, preferred?: string | null) {
+  stopSpeaking()
+  if (isRecorded(spoken)) playClips(spoken)
+  else speak(spoken.text, spoken.calm, preferred)
+}
+
+/** Legge un testo con la voce italiana del telefono, interrompendo quello che stava dicendo. Senza voce italiana tace. */
 export function speak(text: string, calm = false, preferred?: string | null) {
   if (!synth) return
   const status = voiceStatus(preferred)
@@ -77,4 +124,9 @@ export function speak(text: string, calm = false, preferred?: string | null) {
 
 export function stopSpeaking() {
   synth?.cancel()
+  if (!playing) return
+  playing.cancelled = true
+  playing.audio?.pause()
+  window.clearTimeout(playing.timer)
+  playing = null
 }

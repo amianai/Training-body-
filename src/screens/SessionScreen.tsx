@@ -19,8 +19,8 @@ import { useStats, useToday, useWakeLock } from '@/lib/hooks'
 import { buildSteps, targetLabel, workStepCount, type RestStep, type WorkStep } from '@/lib/session'
 import { beep, vibrate } from '@/lib/signals'
 import { cn } from '@/lib/utils'
-import { speak, stopSpeaking, useVoiceStatus } from '@/lib/voice'
-import { DONE_PHRASE, spokenIntro, type Spoken } from '@/lib/voiceScript'
+import { isRecorded, say, stopSpeaking, useVoiceStatus } from '@/lib/voice'
+import { DONE, introAt, type Spoken } from '@/lib/voiceScript'
 import { useAppStore } from '@/store/useAppStore'
 
 /** Conto alla rovescia basato sull'orario, così non perde tempo se il browser rallenta i timer. */
@@ -110,13 +110,14 @@ function WorkView({
   const setSetting = useAppStore((s) => s.setSetting)
   const voiceOn = useAppStore((s) => s.settings.voice)
   const voiceName = useAppStore((s) => s.settings.voiceName)
-  const voiceMissing = useVoiceStatus(voiceName).kind === 'missing'
+  const phoneVoice = useVoiceStatus(voiceName)
+  const voiceMissing = !isRecorded(intro) && phoneVoice.kind === 'missing'
 
   // All'inizio dell'esercizio la voce spiega cosa fare; si zittisce cambiando esercizio o in pausa.
   useEffect(() => {
-    if (voiceOn) speak(intro.text, intro.calm, voiceName)
+    if (voiceOn) say(intro, voiceName)
     return () => stopSpeaking()
-  }, [voiceOn, voiceName, intro.text, intro.calm])
+  }, [voiceOn, voiceName, intro])
   useEffect(() => {
     if (paused) stopSpeaking()
   }, [paused])
@@ -303,7 +304,7 @@ function DoneView({ entry, exerciseCount }: { entry: Entry; exerciseCount: numbe
   const voiceName = useAppStore((s) => s.settings.voiceName)
 
   useEffect(() => {
-    if (voiceOn) speak(DONE_PHRASE, false, voiceName)
+    if (voiceOn) say(DONE, voiceName)
   }, [voiceOn, voiceName])
 
   useEffect(() => {
@@ -401,6 +402,9 @@ export function SessionScreen() {
   const session = active ? getSession(active.sessionId) : undefined
   const mini = active?.mini ?? false
   const steps = useMemo(() => (session ? buildSteps(session, { mini }) : []), [session, mini])
+  const index = Math.min(active?.stepIndex ?? 0, steps.length - 1)
+  // Stesso oggetto finché non cambia passo: la voce parte una volta sola per esercizio.
+  const intro = useMemo(() => introAt(steps, index), [steps, index])
 
   const running = active !== null && doneEntry === null
   useWakeLock(running)
@@ -420,22 +424,11 @@ export function SessionScreen() {
   if (practiceDone) return null
   if (!active || !session || steps.length === 0) return <Navigate to="/" replace />
 
-  const index = Math.min(active.stepIndex, steps.length - 1)
   const step = steps[index]
   const totalWork = workStepCount(steps)
   const doneWork = steps.slice(0, index).filter((s) => s.kind === 'work').length
   const nextWork = steps.slice(index + 1).find((s): s is WorkStep => s.kind === 'work')
   const paused = userPaused || exitDialogOpen || info !== null
-  const previousWork = steps.slice(0, index).filter((s): s is WorkStep => s.kind === 'work')
-  const intro =
-    step.kind === 'work'
-      ? spokenIntro(
-          step,
-          previousWork.at(-1),
-          !previousWork.some((s) => s.exercise.id === step.exercise.id),
-          previousWork.length,
-        )
-      : null
 
   const signal = (times: number) => {
     if (settings.sound) beep(times)

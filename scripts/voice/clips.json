@@ -1,0 +1,437 @@
+[
+ {
+  "id": "calma-0",
+  "text": "Respira piano.",
+  "calm": true
+ },
+ {
+  "id": "calma-1",
+  "text": "Rilassati e respira.",
+  "calm": true
+ },
+ {
+  "id": "calma-2",
+  "text": "Senza fretta.",
+  "calm": true
+ },
+ {
+  "id": "cambia-lato",
+  "text": "Cambia lato: ora il destro.",
+  "calm": false
+ },
+ {
+  "id": "come-e1",
+  "text": "Piedi alla larghezza delle pedane, ginocchia morbide. Piegati all'anca, petto avanti, schiena dritta. Braccia avanti come sul manubrio, gomiti alti.",
+  "calm": false
+ },
+ {
+  "id": "come-e2",
+  "text": "Seduto o sdraiato, cuscino tra le ginocchia. Stringi forte e tieni.",
+  "calm": false
+ },
+ {
+  "id": "come-e3",
+  "text": "Due borse o uno zaino pesante per mano. Cammina dritto, spalle basse, addome stretto.",
+  "calm": false
+ },
+ {
+  "id": "come-e4",
+  "text": "Asciugamano arrotolato, una mano accanto all'altra. Strizza come per farlo gocciolare, poi cambia verso.",
+  "calm": false
+ },
+ {
+  "id": "come-e11",
+  "text": "In piedi su una gamba, ginocchio morbido. Quando è facile chiudi gli occhi.",
+  "calm": false
+ },
+ {
+  "id": "come-e12",
+  "text": "Su una gamba, l’altra va indietro. Busto e gamba dietro scendono insieme, schiena dritta.",
+  "calm": false
+ },
+ {
+  "id": "come-f1",
+  "text": "Mani sotto le spalle, corpo dritto. Petto quasi a terra, poi spingi.",
+  "calm": false
+ },
+ {
+  "id": "come-f6",
+  "text": "Un piede avanti e uno dietro. Scendi dritto finché il ginocchio dietro sfiora terra.",
+  "calm": false
+ },
+ {
+  "id": "come-f8",
+  "text": "Avambracci a terra, corpo dritto dalla testa ai talloni. Addome e glutei stretti.",
+  "calm": false
+ },
+ {
+  "id": "come-f9",
+  "text": "Sdraiato, braccia in alto e ginocchia a 90 gradi. Allunga braccio e gamba opposti, schiena incollata a terra.",
+  "calm": false
+ },
+ {
+  "id": "come-f11",
+  "text": "Salta aprendo gambe e braccia, poi chiudi. Ritmo costante, respira.",
+  "calm": false
+ },
+ {
+  "id": "come-f13",
+  "text": "A pancia in giù, braccia avanti. Solleva braccia e gambe insieme, tieni 2 secondi, giù piano.",
+  "calm": false
+ },
+ {
+  "id": "come-f14",
+  "text": "Sdraiato sotto un tavolo robusto, mani sul bordo. Corpo dritto, porta il petto verso il bordo, poi scendi piano.",
+  "calm": false
+ },
+ {
+  "id": "come-m1",
+  "text": "Cerchi lenti e ampi con i polsi. Metà tempo in un senso, metà nell’altro.",
+  "calm": true
+ },
+ {
+  "id": "come-m2",
+  "text": "A quattro zampe. Inarca la schiena guardando su, poi arrotondala guardando l’ombelico.",
+  "calm": true
+ },
+ {
+  "id": "come-m3",
+  "text": "Sdraiato su un fianco, ginocchia piegate. Apri il braccio sopra come la pagina di un libro.",
+  "calm": true
+ },
+ {
+  "id": "come-m5",
+  "text": "Affondo lungo, mano a terra. Ruota il busto e porta l’altro braccio verso il soffitto.",
+  "calm": true
+ },
+ {
+  "id": "come-m7",
+  "text": "Manico di scopa lungo la schiena: testa, schiena e osso sacro lo toccano. Porta il sedere indietro, schiena dritta.",
+  "calm": true
+ },
+ {
+  "id": "come-s1",
+  "text": "Braccio teso davanti, palmo in su. Con l'altra mano tira indietro le dita. Tensione 5-6 su 10, mai dolore.",
+  "calm": true
+ },
+ {
+  "id": "come-s2",
+  "text": "Braccio teso davanti, palmo in giù. Piega il polso e tira il dorso della mano verso di te.",
+  "calm": true
+ },
+ {
+  "id": "come-s3",
+  "text": "Avambraccio sullo stipite, gomito all’altezza della spalla. Fai un passo avanti finché senti il petto.",
+  "calm": true
+ },
+ {
+  "id": "come-s5",
+  "text": "Un ginocchio a terra, l’altro piede avanti. Stringi il gluteo e porta il bacino in avanti.",
+  "calm": true
+ },
+ {
+  "id": "come-s7",
+  "text": "Prendi il piede dietro con la mano. Ginocchia vicine, bacino dritto.",
+  "calm": true
+ },
+ {
+  "id": "come-s8",
+  "text": "Mani al muro, una gamba dietro tesa. Tallone a terra.",
+  "calm": true
+ },
+ {
+  "id": "fatto",
+  "text": "Fatto! Ottimo lavoro. Ora recupera.",
+  "calm": false
+ },
+ {
+  "id": "forza-0",
+  "text": "Vai!",
+  "calm": false
+ },
+ {
+  "id": "forza-1",
+  "text": "Forza, ci sei.",
+  "calm": false
+ },
+ {
+  "id": "forza-2",
+  "text": "Dai, comincia.",
+  "calm": false
+ },
+ {
+  "id": "forza-3",
+  "text": "Controllato, e vai.",
+  "calm": false
+ },
+ {
+  "id": "giro-2",
+  "text": "Giro 2.",
+  "calm": false
+ },
+ {
+  "id": "giro-3",
+  "text": "Giro 3.",
+  "calm": false
+ },
+ {
+  "id": "giro-4",
+  "text": "Giro 4.",
+  "calm": false
+ },
+ {
+  "id": "giro-5",
+  "text": "Giro 5.",
+  "calm": false
+ },
+ {
+  "id": "giro-6",
+  "text": "Giro 6.",
+  "calm": false
+ },
+ {
+  "id": "giro-7",
+  "text": "Giro 7.",
+  "calm": false
+ },
+ {
+  "id": "lato-sinistro",
+  "text": "Lato sinistro.",
+  "calm": false
+ },
+ {
+  "id": "nome-e1",
+  "text": "Posizione d'attacco.",
+  "calm": false
+ },
+ {
+  "id": "nome-e2",
+  "text": "Stretta degli adduttori.",
+  "calm": false
+ },
+ {
+  "id": "nome-e3",
+  "text": "Camminata del contadino.",
+  "calm": false
+ },
+ {
+  "id": "nome-e4",
+  "text": "Strizza l'asciugamano.",
+  "calm": false
+ },
+ {
+  "id": "nome-e11",
+  "text": "Appoggio su una gamba.",
+  "calm": false
+ },
+ {
+  "id": "nome-e12",
+  "text": "Stacco rumeno su una gamba.",
+  "calm": false
+ },
+ {
+  "id": "nome-f1",
+  "text": "Flessioni.",
+  "calm": false
+ },
+ {
+  "id": "nome-f6",
+  "text": "Split squat.",
+  "calm": false
+ },
+ {
+  "id": "nome-f8",
+  "text": "Plank.",
+  "calm": false
+ },
+ {
+  "id": "nome-f9",
+  "text": "Dead bug.",
+  "calm": false
+ },
+ {
+  "id": "nome-f11",
+  "text": "Jumping jack.",
+  "calm": false
+ },
+ {
+  "id": "nome-f13",
+  "text": "Superman.",
+  "calm": false
+ },
+ {
+  "id": "nome-f14",
+  "text": "Rematore inverso al tavolo.",
+  "calm": false
+ },
+ {
+  "id": "nome-m1",
+  "text": "Mobilità dei polsi.",
+  "calm": true
+ },
+ {
+  "id": "nome-m2",
+  "text": "Gatto-mucca.",
+  "calm": true
+ },
+ {
+  "id": "nome-m3",
+  "text": "Rotazione toracica a libro.",
+  "calm": true
+ },
+ {
+  "id": "nome-m5",
+  "text": "Affondo con rotazione.",
+  "calm": true
+ },
+ {
+  "id": "nome-m7",
+  "text": "Piegamento all'anca.",
+  "calm": true
+ },
+ {
+  "id": "nome-s1",
+  "text": "Stretching flessori avambraccio.",
+  "calm": true
+ },
+ {
+  "id": "nome-s2",
+  "text": "Stretching estensori avambraccio.",
+  "calm": true
+ },
+ {
+  "id": "nome-s3",
+  "text": "Pettorali alla porta.",
+  "calm": true
+ },
+ {
+  "id": "nome-s5",
+  "text": "Flessori dell'anca.",
+  "calm": true
+ },
+ {
+  "id": "nome-s7",
+  "text": "Quadricipite in piedi.",
+  "calm": true
+ },
+ {
+  "id": "nome-s8",
+  "text": "Polpacci al muro.",
+  "calm": true
+ },
+ {
+  "id": "rip-3-lato",
+  "text": "3 ripetizioni per lato.",
+  "calm": false
+ },
+ {
+  "id": "rip-4",
+  "text": "4 ripetizioni.",
+  "calm": false
+ },
+ {
+  "id": "rip-4-lato",
+  "text": "4 ripetizioni per lato.",
+  "calm": false
+ },
+ {
+  "id": "rip-5",
+  "text": "5 ripetizioni.",
+  "calm": false
+ },
+ {
+  "id": "rip-6-lato",
+  "text": "6 ripetizioni per lato.",
+  "calm": false
+ },
+ {
+  "id": "rip-8",
+  "text": "8 ripetizioni.",
+  "calm": false
+ },
+ {
+  "id": "rip-8-lato",
+  "text": "8 ripetizioni per lato.",
+  "calm": false
+ },
+ {
+  "id": "rip-10",
+  "text": "10 ripetizioni.",
+  "calm": false
+ },
+ {
+  "id": "rip-10-lato",
+  "text": "10 ripetizioni per lato.",
+  "calm": false
+ },
+ {
+  "id": "rip-12",
+  "text": "12 ripetizioni.",
+  "calm": false
+ },
+ {
+  "id": "rip-12-lato",
+  "text": "12 ripetizioni per lato.",
+  "calm": false
+ },
+ {
+  "id": "rip-14",
+  "text": "14 ripetizioni.",
+  "calm": false
+ },
+ {
+  "id": "rip-14-lato",
+  "text": "14 ripetizioni per lato.",
+  "calm": false
+ },
+ {
+  "id": "rip-16",
+  "text": "16 ripetizioni.",
+  "calm": false
+ },
+ {
+  "id": "sec-8",
+  "text": "8 secondi.",
+  "calm": false
+ },
+ {
+  "id": "sec-20",
+  "text": "20 secondi.",
+  "calm": false
+ },
+ {
+  "id": "sec-25",
+  "text": "25 secondi.",
+  "calm": false
+ },
+ {
+  "id": "sec-30",
+  "text": "30 secondi.",
+  "calm": false
+ },
+ {
+  "id": "sec-35",
+  "text": "35 secondi.",
+  "calm": false
+ },
+ {
+  "id": "sec-40",
+  "text": "40 secondi.",
+  "calm": false
+ },
+ {
+  "id": "sec-45",
+  "text": "45 secondi.",
+  "calm": false
+ },
+ {
+  "id": "sec-50",
+  "text": "50 secondi.",
+  "calm": false
+ },
+ {
+  "id": "sec-55",
+  "text": "55 secondi.",
+  "calm": false
+ }
+]

@@ -39,7 +39,8 @@ export default defineConfig(({ mode }) => {
             },
             workbox: {
               // Dei font basta il sottoinsieme latino: gli altri non vengono mai scaricati.
-              globPatterns: ['**/*.{js,css,html,svg,png}', 'assets/*-latin-*.woff2'],
+              // Le frasi registrate della voce guida servono anche senza internet.
+              globPatterns: ['**/*.{js,css,html,svg,png}', 'assets/*-latin-*.woff2', 'voce/*.mp3'],
             },
           }),
     ],

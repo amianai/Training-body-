@@ -34,6 +34,12 @@ Questa è la **v0**: un prototipo da usare per una settimana. Quello che non fun
 
 La logica è in `src/lib/streak.ts`, con i test in `src/lib/streak.test.ts`.
 
+### Voce guida
+
+All'inizio di ogni esercizio una voce dice cosa fare; il tasto altoparlante in basso a sinistra la spegne.
+Le frasi sono registrate una volta con Gemini TTS e rimontate dall'app: come si fa è in `scripts/voice/README.md`.
+Le frasi non ancora registrate le legge la voce italiana del telefono.
+
 ## Cambiare la scheda
 
 La scheda è scritta nel codice, perché l'app è fatta su misura per una persona:
