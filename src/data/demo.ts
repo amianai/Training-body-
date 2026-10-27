@@ -7,7 +7,8 @@ import type { BodyZone, Entry, Feeling } from './types'
  * Dati di esempio: circa 3 mesi simulati di uso dell'app da parte di un principiante.
  * Servono a vedere come appaiono streak, storico e giri in moto dopo un po' di tempo.
  * La storia: inizio faticoso, un freeze per un imprevisto, un salto per pigrizia,
- * una settimana persa, poi una streak lunga. In moto gli avambracci reggono sempre di più.
+ * una settimana persa, poi una streak lunga. In moto gli avambracci reggono sempre di più,
+ * e ai test di forma (settimane 1, 5, 9, 13) i numeri salgono.
  */
 
 type DemoEvent =
@@ -21,11 +22,12 @@ type DemoEvent =
       note?: string
     }
   | { day: number; type: 'freeze' | 'skip'; note?: string }
+  | { day: number; type: 'test'; results: Record<string, number>; note?: string }
 
 // Una riga per settimana; `day`: 0 = lunedì … 6 = domenica. L'ultima è la settimana corrente.
 const WEEKS: DemoEvent[][] = [
   [
-    { day: 1, type: 'workout', feeling: 'duro', note: 'Prima volta: 10 flessioni e già stanco' },
+    { day: 1, type: 'test', results: { f1: 10, f14: 6, f8: 35, e13: 40 }, note: 'Primo test: 10 flessioni e già stanco' },
     { day: 3, type: 'workout', feeling: 'duro' },
     {
       day: 6,
@@ -53,7 +55,7 @@ const WEEKS: DemoEvent[][] = [
     { day: 5, type: 'workout', feeling: 'duro' },
   ],
   [
-    { day: 0, type: 'workout', feeling: 'giusto' },
+    { day: 0, type: 'test', results: { f1: 12, f14: 8, f8: 48, e13: 55 } },
     { day: 2, type: 'skip' },
     { day: 3, type: 'workout', feeling: 'giusto', note: 'Ieri ho saltato, oggi ho recuperato' },
     { day: 5, type: 'workout', feeling: 'duro' },
@@ -79,7 +81,7 @@ const WEEKS: DemoEvent[][] = [
   [{ day: 1, type: 'workout', feeling: 'giusto', note: 'Settimana piena di impegni, solo questo' }],
   [
     { day: 0, type: 'mini', feeling: 'giusto', note: 'Si riparte' },
-    { day: 2, type: 'workout', feeling: 'duro' },
+    { day: 2, type: 'test', results: { f1: 13, f14: 9, f8: 55, e13: 60 }, note: 'Dopo la settimana persa, comunque meglio' },
     { day: 4, type: 'workout', feeling: 'giusto' },
     { day: 6, type: 'ride', minutes: 60, fatigue: { avambracci: 6, braccia: 5, spalle: 4, schiena: 5, gambe: 4 }, pumpAfterMin: 22 },
   ],
@@ -107,7 +109,7 @@ const WEEKS: DemoEvent[][] = [
     { day: 5, type: 'ride', minutes: 90, fatigue: { avambracci: 4, braccia: 3, spalle: 3, schiena: 4, gambe: 4 }, pumpAfterMin: 30 },
   ],
   [
-    { day: 0, type: 'workout', feeling: 'giusto' },
+    { day: 0, type: 'test', results: { f1: 16, f14: 11, f8: 70, e13: 80 } },
     { day: 2, type: 'mini', feeling: 'facile' },
     { day: 4, type: 'workout', feeling: 'giusto' },
     { day: 6, type: 'ride', minutes: 75, fatigue: { avambracci: 4, braccia: 3, spalle: 3, schiena: 3, gambe: 4 }, pumpAfterMin: 32 },
@@ -167,6 +169,14 @@ export function buildDemo(today: string, existing: Entry[]): { startDate: string
           sessionId,
           durationSec: Math.round(minutes * 60),
           feeling: event.feeling,
+        })
+      } else if (event.type === 'test') {
+        entries.push({
+          ...base,
+          type: 'test',
+          sessionId: 'test',
+          durationSec: Math.round((13 + random() * 3) * 60),
+          test: event.results,
         })
       } else if (event.type === 'ride') {
         entries.push({

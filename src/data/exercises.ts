@@ -192,6 +192,16 @@ export const EXERCISES: Exercise[] = [
     cues: ['Su una gamba, l’altra va indietro', 'Busto e gamba dietro scendono insieme, schiena dritta'],
     why: 'Equilibrio più catena posteriore: anche e schiena forti in piedi.',
   },
+  {
+    id: 'e13',
+    name: 'Sedia al muro',
+    nameEn: 'Wall sit',
+    category: 'enduro',
+    kind: 'time',
+    cues: ['Schiena appoggiata al muro, piedi avanti', 'Scendi finché le cosce sono parallele a terra', 'Ginocchia sopra le caviglie, e tieni'],
+    why: 'Le cosce che ti tengono in piedi sulle pedane per tutto il giro.',
+    equipment: 'Un muro',
+  },
 
   // Flex
   {

@@ -19,6 +19,9 @@ Questa è la **v0**: un prototipo da usare per una settimana. Quello che non fun
   - imprevisto, che usa il freeze;
   - "non mi va", che azzera la streak.
 - **Giro in moto**: conta come allenamento, con diario della fatica per zona e "dopo quanti minuti si induriscono gli avambracci".
+  Dopo un giro di oggi propone 7 minuti di **scarico** per avambracci, schiena e anche (facoltativo, non conta come allenamento).
+- **Test di forma**: alla settimana 1 e poi ogni 4 (5, 9, 13…) prende il posto di un allenamento. Quattro prove al massimo: flessioni, rematore al tavolo, plank, sedia al muro.
+  In home, "I tuoi numeri" mostra gli ultimi risultati, i miglioramenti dal primo test e gli avambracci in moto. La logica è in `src/lib/fitnessTest.ts`.
 - **Storico**: calendario del mese, dettagli del giorno, eliminazione.
 - **Scheda**: fasi e sessioni, con la scheda dettagliata di ogni esercizio.
 - **Impostazioni**: bip e vibrazione a fine timer (spenti di default), backup e ripristino dei dati.

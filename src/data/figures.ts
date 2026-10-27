@@ -175,6 +175,17 @@ export const FIGURES: Record<string, FigureSpec> = {
     move: 1.4,
     phases: ['Tieni', 'Tieni', 'Tieni', 'Tieni'],
   },
+  e13: {
+    frames: [
+      { root: [0.62, G - 0.02], anchor: 'ankle', torso: 270, neck: 272, legs: [{ a: 0, b: 90, c: 0 }, { a: 0, b: 90, c: 0 }], arms: [{ a: 8, b: 2, c: 0 }, { a: 8, b: 2, c: 0 }] },
+      { root: [0.62, G - 0.02], anchor: 'ankle', torso: 270, neck: 274, legs: [{ a: 2, b: 90, c: 0 }, { a: 2, b: 90, c: 0 }], arms: [{ a: 12, b: 4, c: 0 }, { a: 12, b: 4, c: 0 }] },
+    ],
+    hold: [1.2, 1.2],
+    move: 1.6,
+    phases: ['Tieni', 'Tieni', 'Tieni', 'Tieni'],
+    decor: [{ kind: 'line', a: [0.34, -0.2], b: [0.34, G], tone: 'prop' }],
+    key: 'knee',
+  },
   e12: {
     frames: [
       { root: [0.45, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, { a: 95, b: 92, c: 15 }], arms: [HANG, HANG] },

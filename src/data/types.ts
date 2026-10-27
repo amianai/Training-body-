@@ -22,6 +22,8 @@ export interface BlockItem {
   exerciseId: string
   reps?: number
   seconds?: number
+  /** Prova del test: più ripetizioni o più tempo che puoi, poi si scrive il risultato. */
+  max?: boolean
 }
 
 /**
@@ -49,6 +51,8 @@ export interface Session {
   practice?: boolean
   /** Messaggio in home alla fine di una sessione extra. */
   doneMessage?: string
+  /** Test di forma: si salva con i risultati delle prove. */
+  test?: boolean
 }
 
 export interface Phase {
@@ -67,7 +71,7 @@ export interface Plan {
   phases: Phase[]
 }
 
-export type EntryType = 'workout' | 'mini' | 'ride' | 'freeze' | 'skip'
+export type EntryType = 'workout' | 'mini' | 'ride' | 'test' | 'freeze' | 'skip'
 
 export type Feeling = 'facile' | 'giusto' | 'duro' | 'troppo'
 
@@ -92,6 +96,8 @@ export interface Entry {
   feeling?: Feeling
   note?: string
   ride?: RideLog
+  /** Risultati del test di forma: id esercizio → ripetizioni o secondi. */
+  test?: Record<string, number>
   /** Registrazione di esempio, non vera. */
   demo?: boolean
 }

@@ -12,6 +12,8 @@ export interface WorkStep {
   blockTitle: string
   round: number
   rounds: number
+  /** Prova del test: più che puoi, senza obiettivo. */
+  max?: boolean
 }
 
 export interface RestStep {
@@ -27,6 +29,8 @@ const MIN_PREP_SEC = 5
 const FIRST_PREP_SEC = 10
 const SIDE_SWITCH_SEC = 5
 const SEC_PER_REP = 3
+/** Una prova "più che puoi" dura circa un minuto. */
+const MAX_ESTIMATE_SEC = 60
 
 /**
  * Trasforma una sessione in una sequenza piatta di passi: lavoro e recuperi.
@@ -51,6 +55,7 @@ export function buildSteps(session: Session, options: { mini?: boolean } = {}): 
             exercise,
             reps: item.reps,
             seconds: item.seconds,
+            max: item.max,
             side,
             blockTitle: block.title,
             round,
@@ -95,6 +100,7 @@ export function estimateDurationSec(steps: Step[]): number {
   return steps.reduce((total, step) => {
     if (step.kind === 'rest') return total + step.seconds
     if (step.seconds !== undefined) return total + step.seconds
+    if (step.max) return total + MAX_ESTIMATE_SEC
     const reps = (step.reps ?? 10) * (step.exercise.perSide ? 2 : 1)
     return total + reps * SEC_PER_REP + 5
   }, 0)
@@ -119,7 +125,8 @@ export function sessionExercises(session: Session): Exercise[] {
   return list
 }
 
-export function targetLabel(step: { reps?: number; seconds?: number; exercise: Exercise }): string {
+export function targetLabel(step: { reps?: number; seconds?: number; max?: boolean; exercise: Exercise }): string {
+  if (step.max) return 'più che puoi'
   if (step.seconds !== undefined) {
     const perSide = step.exercise.perSide ? ' per lato' : ''
     return `${step.seconds} s${perSide}`

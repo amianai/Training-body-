@@ -1,16 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Check, Clock, Flame, Motorbike, Play, Settings, Snowflake, Trophy } from 'lucide-react'
+import { Check, Clock, Flame, Motorbike, Play, Settings, Snowflake, Timer, Trophy } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router'
 
 import { CategoryBadge } from '@/components/CategoryBadge'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { TestResults } from '@/components/TestResults'
 import { WeekDots } from '@/components/WeekDots'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { PLAN, getSession } from '@/data/plan'
+import { FITNESS_TEST, PLAN, getSession } from '@/data/plan'
 import type { Entry, Session } from '@/data/types'
 import { formatDuration, formatLong } from '@/lib/dates'
+import { nextTestWeek, testHistory, testRows } from '@/lib/fitnessTest'
 import { useStats } from '@/lib/hooks'
 import { buildSteps, estimateDurationSec, sessionExercises, workStepCount } from '@/lib/session'
 import type { WeekStatus } from '@/lib/streak'
@@ -47,11 +49,57 @@ function entryLabel(entry: Entry): string {
     }
     case 'ride':
       return `Giro in moto · ${entry.ride?.minutes ?? 0} min`
+    case 'test':
+      return 'Test di forma'
     case 'freeze':
       return 'Freeze usato'
     case 'skip':
       return 'Allenamento saltato'
   }
+}
+
+/** I numeri che dicono se stai migliorando: test di forma e avambracci in moto. */
+function MyNumbers({ entries, weekNumber, testDue }: { entries: Entry[]; weekNumber: number; testDue: boolean }) {
+  const tests = testHistory(entries)
+  const pumps = entries
+    .filter((e) => e.type === 'ride' && e.ride?.pumpAfterMin)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map((e) => e.ride!.pumpAfterMin!)
+  if (tests.length === 0 && pumps.length === 0) return null
+  return (
+    <section className="flex flex-col gap-3">
+      <h2 className="text-sm font-semibold text-muted-foreground uppercase">I tuoi numeri</h2>
+      <Card className="gap-3">
+        <CardContent className="flex flex-col gap-3">
+          {tests.length > 0 && (
+            <>
+              <TestResults rows={testRows(tests)} />
+              <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Timer className="size-4 text-accent" />
+                {testDue ? 'Il prossimo allenamento è il test' : `Prossimo test: settimana ${nextTestWeek(weekNumber)}`}
+                {tests.length > 1 && ' · in verde i miglioramenti dal primo'}
+              </p>
+            </>
+          )}
+          {pumps.length > 0 && (
+            <p className="flex items-center gap-2 text-sm">
+              <Motorbike className="size-5 text-accent" />
+              <span>
+                Avambracci duri dopo{' '}
+                {pumps.length > 1 ? (
+                  <span className="font-semibold tabular">
+                    {pumps[0]} → {pumps.at(-1)} min
+                  </span>
+                ) : (
+                  <span className="font-semibold tabular">{pumps[0]} min</span>
+                )}
+              </span>
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </section>
+  )
 }
 
 function useSessionSummary(session: Session) {
@@ -92,6 +140,7 @@ export function HomeScreen() {
 
   const session = getSession(stats.nextSessionId) ?? PLAN.sessions[0]
   const summary = useSessionSummary(session)
+  const testSummary = useSessionSummary(FITNESS_TEST)
   const activeSession = active ? getSession(active.sessionId) : undefined
   const activeTotal = useMemo(
     () => (activeSession ? workStepCount(buildSteps(activeSession, { mini: active?.mini })) : 0),
@@ -109,8 +158,8 @@ export function HomeScreen() {
   const freezeToday = todayEntries.some((e) => e.type === 'freeze')
   const skipToday = todayEntries.some((e) => e.type === 'skip')
 
-  const start = (mini: boolean) => {
-    startSession(session.id, mini)
+  const start = (mini: boolean, which: Session = session) => {
+    startSession(which.id, mini)
     navigate('/sessione')
   }
 
@@ -257,31 +306,62 @@ export function HomeScreen() {
               )}
             </p>
           )}
-          <Card>
-            <CardContent className="flex flex-col gap-3">
-              <div>
-                <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                  Sessione {session.id.toUpperCase()}
-                </p>
-                <div className="font-display text-4xl leading-none font-bold uppercase">{session.name}</div>
-                <p className="mt-1.5 text-sm text-muted-foreground">{session.focus}</p>
-              </div>
-              <div className="flex items-center gap-4 text-sm">
-                <span className="flex items-center gap-1.5">
-                  <Clock className="size-4 text-muted-foreground" /> ~{summary.minutes} min
-                </span>
-                <span className="text-muted-foreground">{summary.exerciseCount} esercizi</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {summary.categories.map((c) => (
-                  <CategoryBadge key={c} category={c} />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-          <Button size="xl" className="h-20 w-full text-3xl" onClick={() => start(false)}>
-            <Play className="size-7 fill-current" /> Inizia
-          </Button>
+          {stats.testDue ? (
+            <>
+              <Card className="border-accent/50">
+                <CardContent className="flex flex-col gap-3">
+                  <div>
+                    <p className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-accent uppercase">
+                      <Timer className="size-4" /> Al posto dell'allenamento
+                    </p>
+                    <div className="font-display text-4xl leading-none font-bold uppercase">{FITNESS_TEST.name}</div>
+                    <p className="mt-1.5 text-sm text-muted-foreground">{FITNESS_TEST.focus}</p>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="size-4 text-muted-foreground" /> ~{testSummary.minutes} min
+                    </span>
+                    <span className="text-muted-foreground">flessioni, rematore, plank, sedia al muro</span>
+                  </div>
+                </CardContent>
+              </Card>
+              <Button size="xl" variant="accent" className="h-20 w-full text-3xl" onClick={() => start(false, FITNESS_TEST)}>
+                <Timer className="size-7" /> Inizia il test
+              </Button>
+              <Button variant="ghost" className="h-auto flex-col gap-0 py-2 whitespace-normal text-muted-foreground" onClick={() => start(false)}>
+                <span>Oggi faccio l'allenamento normale</span>
+                <span className="text-xs font-normal">{session.name} · il test resta il prossimo</span>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Card>
+                <CardContent className="flex flex-col gap-3">
+                  <div>
+                    <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                      Sessione {session.id.toUpperCase()}
+                    </p>
+                    <div className="font-display text-4xl leading-none font-bold uppercase">{session.name}</div>
+                    <p className="mt-1.5 text-sm text-muted-foreground">{session.focus}</p>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="size-4 text-muted-foreground" /> ~{summary.minutes} min
+                    </span>
+                    <span className="text-muted-foreground">{summary.exerciseCount} esercizi</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {summary.categories.map((c) => (
+                      <CategoryBadge key={c} category={c} />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+              <Button size="xl" className="h-20 w-full text-3xl" onClick={() => start(false)}>
+                <Play className="size-7 fill-current" /> Inizia
+              </Button>
+            </>
+          )}
           <div className="grid grid-cols-2 gap-3">
             {!stats.week.complete && !freezeToday && !skipToday ? (
               <Button
@@ -305,6 +385,8 @@ export function HomeScreen() {
           </div>
         </section>
       )}
+
+      {!active && <MyNumbers entries={entries} weekNumber={stats.phase.weekNumber} testDue={stats.testDue} />}
 
       <SkipSheet
         key={skipKey}

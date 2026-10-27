@@ -1,4 +1,4 @@
-import { COOLDOWN, PLAN, PRACTICE } from '@/data/plan'
+import { COOLDOWN, FITNESS_TEST, PLAN, PRACTICE } from '@/data/plan'
 import type { Category, Exercise } from '@/data/types'
 import { buildSteps, type Side, type Step, type WorkStep } from './session'
 
@@ -47,6 +47,8 @@ const howClip = (exercise: Exercise) => clip(`come-${exercise.id}`, sentences(ex
 const roundClip = (round: number) => clip(`giro-${round}`, `Giro ${round}.`)
 const sideClip = (side: Side) => clip(`lato-${side}`, `Lato ${side}.`)
 const SWITCH = clip('cambia-lato', 'Cambia lato: ora il destro.')
+const TEST_REPS = clip('test-rip', 'Test: più ripetizioni che puoi, con la forma giusta. Quando la forma cede, fermati e tocca Fatto.')
+const TEST_TIME = clip('test-tempo', 'Test: tieni più a lungo che puoi. Quando cedi, tocca Stop.')
 
 function targetClip(step: WorkStep): Clip {
   const perSide = step.exercise.perSide && !step.side
@@ -74,6 +76,11 @@ export function spokenIntro(step: WorkStep, previous: WorkStep | undefined, firs
   const { exercise } = step
   const calm = isCalm(exercise)
   const closer = closerClip(calm, n)
+
+  // Prova del test: cosa misura, come si fa, e via.
+  if (step.max) {
+    return spoken([nameClip(exercise), exercise.kind === 'time' ? TEST_TIME : TEST_REPS, howClip(exercise), closer], calm)
+  }
 
   // Secondo lato subito dopo il primo: basta dirlo.
   if (step.side === 'destro' && previous?.exercise.id === exercise.id && previous.side === 'sinistro') {
@@ -105,7 +112,7 @@ export function allClips(): Clip[] {
     if (seen && seen.text !== c.text) throw new Error(`Clip ${c.id} con due testi diversi`)
     byId.set(c.id, c)
   }
-  for (const session of [...PLAN.sessions, PRACTICE, COOLDOWN]) {
+  for (const session of [...PLAN.sessions, PRACTICE, COOLDOWN, FITNESS_TEST]) {
     for (const mini of [false, true]) {
       const steps = buildSteps(session, { mini })
       steps.forEach((_, i) => introAt(steps, i)?.clips.forEach(add))

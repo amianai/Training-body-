@@ -10,6 +10,8 @@ export interface ActiveSession {
   mini: boolean
   stepIndex: number
   startedAt: number
+  /** Risultati delle prove già fatte, se è il test di forma. */
+  results?: Record<string, number>
 }
 
 export interface Settings {
@@ -39,6 +41,7 @@ interface AppState extends PersistedState {
   removeEntry: (id: string) => void
   startSession: (sessionId: string, mini: boolean) => void
   setStepIndex: (stepIndex: number) => void
+  setResult: (exerciseId: string, value: number) => void
   clearActive: () => void
   setSetting: <K extends keyof Settings>(key: K, value: Settings[K]) => void
   importBackup: (data: unknown) => boolean
@@ -93,6 +96,10 @@ export const useAppStore = create<AppState>()(
         set({ active: { sessionId, mini, stepIndex: 0, startedAt: Date.now() } }),
       setStepIndex: (stepIndex) =>
         set((s) => (s.active ? { active: { ...s.active, stepIndex } } : {})),
+      setResult: (exerciseId, value) =>
+        set((s) =>
+          s.active ? { active: { ...s.active, results: { ...s.active.results, [exerciseId]: value } } } : {},
+        ),
       clearActive: () => set({ active: null }),
 
       setSetting: (key, value) => set((s) => ({ settings: { ...s.settings, [key]: value } })),

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ChevronRight, Clock, Info, Play } from 'lucide-react'
+import { ChevronRight, Clock, Info, Play, Timer } from 'lucide-react'
 import { useNavigate } from 'react-router'
 
 import { CategoryDot } from '@/components/CategoryBadge'
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { getExercise } from '@/data/exercises'
 import { COOLDOWN, PLAN, PRACTICE, getSession } from '@/data/plan'
 import type { Exercise, Session } from '@/data/types'
+import { TEST_EVERY_WEEKS, isTestWeek } from '@/lib/fitnessTest'
 import { useStats } from '@/lib/hooks'
 import { buildSteps, estimateDurationSec, targetLabel } from '@/lib/session'
 import { cn } from '@/lib/utils'
@@ -51,7 +52,9 @@ export function PlanScreen() {
   const phases = PLAN.phases.map((phase, index) => {
     const from = 1 + PLAN.phases.slice(0, index).reduce((sum, p) => sum + p.weeks, 0)
     const isLast = index === PLAN.phases.length - 1
-    return { ...phase, index, range: isLast ? `Dalla settimana ${from}` : `Settimane ${from}-${from + phase.weeks - 1}` }
+    const weeks = Array.from({ length: phase.weeks }, (_, i) => from + i).filter(isTestWeek)
+    const tests = weeks.length === 0 ? null : `Test alla settimana ${weeks.join(' e ')}${isLast ? `, poi ogni ${TEST_EVERY_WEEKS}` : ''}`
+    return { ...phase, index, tests, range: isLast ? `Dalla settimana ${from}` : `Settimane ${from}-${from + phase.weeks - 1}` }
   })
 
   return (
@@ -96,6 +99,11 @@ export function PlanScreen() {
                   {p.index === stats.phase.index && <span className="ml-2 text-xs text-primary">ADESSO</span>}
                 </p>
                 <p className="text-sm text-muted-foreground">{p.range}</p>
+                {p.tests && (
+                  <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-accent">
+                    <Timer className="size-3.5" /> {p.tests}
+                  </p>
+                )}
               </div>
               <span className="font-display text-2xl font-bold">{p.sessionsPerWeek}×</span>
             </li>

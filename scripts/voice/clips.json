@@ -50,6 +50,11 @@
   "calm": false
  },
  {
+  "id": "come-e13",
+  "text": "Schiena appoggiata al muro, piedi avanti. Scendi finché le cosce sono parallele a terra. Ginocchia sopra le caviglie, e tieni.",
+  "calm": false
+ },
+ {
   "id": "come-f1",
   "text": "Mani sotto le spalle, corpo dritto. Petto quasi a terra, poi spingi.",
   "calm": false
@@ -230,6 +235,11 @@
   "calm": false
  },
  {
+  "id": "nome-e13",
+  "text": "Sedia al muro.",
+  "calm": false
+ },
+ {
   "id": "nome-f1",
   "text": "Flessioni.",
   "calm": false
@@ -340,6 +350,11 @@
   "calm": false
  },
  {
+  "id": "rip-6",
+  "text": "6 ripetizioni.",
+  "calm": false
+ },
+ {
   "id": "rip-6-lato",
   "text": "6 ripetizioni per lato.",
   "calm": false
@@ -432,6 +447,16 @@
  {
   "id": "sec-55",
   "text": "55 secondi.",
+  "calm": false
+ },
+ {
+  "id": "test-rip",
+  "text": "Test: più ripetizioni che puoi, con la forma giusta. Quando la forma cede, fermati e tocca Fatto.",
+  "calm": false
+ },
+ {
+  "id": "test-tempo",
+  "text": "Test: tieni più a lungo che puoi. Quando cedi, tocca Stop.",
   "calm": false
  }
 ]

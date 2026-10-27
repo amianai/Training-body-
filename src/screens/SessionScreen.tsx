@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import confetti from 'canvas-confetti'
-import { Check, Flame, Info, Maximize2, Pause, Play, Plus, SkipBack, SkipForward, X } from 'lucide-react'
+import { Check, Flame, Info, Maximize2, Pause, Play, Plus, SkipBack, SkipForward, Square, X } from 'lucide-react'
 import { Navigate, useBlocker, useNavigate } from 'react-router'
 
 import { CategoryBadge } from '@/components/CategoryBadge'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { ExerciseFigure } from '@/components/ExerciseFigure'
 import { ExerciseSheet } from '@/components/ExerciseSheet'
+import { TestResults } from '@/components/TestResults'
 import { VoiceToggle } from '@/components/VoiceToggle'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -17,6 +18,7 @@ import type { Entry, Exercise, Feeling } from '@/data/types'
 import { formatClock, formatDuration } from '@/lib/dates'
 import { useStats, useToday, useWakeLock } from '@/lib/hooks'
 import { buildSteps, targetLabel, workStepCount, type RestStep, type WorkStep } from '@/lib/session'
+import { nextTestWeek, testHistory, testRows } from '@/lib/fitnessTest'
 import { beep, vibrate } from '@/lib/signals'
 import { cn } from '@/lib/utils'
 import { isRecorded, say, stopSpeaking, useVoiceStatus } from '@/lib/voice'
@@ -59,6 +61,61 @@ function useCountdown(totalSec: number, paused: boolean, onEnd: () => void) {
   return { remainingSec: remainingMs / 1000, progress: 1 - remainingMs / (totalSec * 1000), addSeconds }
 }
 
+/** Cronometro che sale (prove a tempo del test), basato sull'orario come il conto alla rovescia. */
+function useStopwatch(paused: boolean) {
+  const [elapsedMs, setElapsedMs] = useState(0)
+  const elapsedRef = useRef(0)
+
+  useEffect(() => {
+    if (paused) return
+    const start = Date.now() - elapsedRef.current
+    const id = window.setInterval(() => {
+      elapsedRef.current = Date.now() - start
+      setElapsedMs(elapsedRef.current)
+    }, 200)
+    return () => window.clearInterval(id)
+  }, [paused])
+
+  return elapsedMs / 1000
+}
+
+/** Dopo una prova del test: il risultato con tasti grandi, da correggere prima di salvare. */
+function ResultEntry({
+  initial,
+  unit,
+  question,
+  onSave,
+}: {
+  initial: number
+  unit: string
+  question: string
+  onSave: (value: number) => void
+}) {
+  const [value, setValue] = useState(initial)
+  const step = (delta: number) => setValue((v) => Math.max(0, v + delta))
+  return (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex flex-1 flex-col items-center justify-center gap-4">
+        <p className="font-display text-3xl font-bold text-muted-foreground uppercase">{question}</p>
+        <div className="flex items-baseline gap-2">
+          <BigNumber size="md">{value}</BigNumber>
+          <span className="font-display text-3xl font-semibold text-muted-foreground uppercase">{unit}</span>
+        </div>
+        <div className="grid w-full grid-cols-4 gap-2">
+          {[-5, -1, 1, 5].map((delta) => (
+            <Button key={delta} size="lg" variant="outline" className="h-16 text-2xl tabular" onClick={() => step(delta)}>
+              {delta > 0 ? `+${delta}` : `−${-delta}`}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <Button size="xl" className="mb-4 h-24 w-full text-3xl" onClick={() => onSave(value)}>
+        <Check className="size-8" strokeWidth={3} /> Salva
+      </Button>
+    </div>
+  )
+}
+
 const NUMBER_SIZE = {
   sm: 'text-5xl',
   md: 'text-[clamp(5rem,26vw,8.5rem)]',
@@ -94,6 +151,8 @@ function WorkView({
   onDone,
   onInfo,
   intro,
+  onResult,
+  previousResult,
 }: {
   step: WorkStep
   paused: boolean
@@ -101,10 +160,18 @@ function WorkView({
   onDone: () => void
   onInfo: (exercise: Exercise) => void
   intro: Spoken
+  /** Prova del test finita: il risultato da salvare. */
+  onResult: (value: number) => void
+  /** Risultato della stessa prova al test precedente, come punto di partenza. */
+  previousResult?: number
 }) {
   const { exercise } = step
   const timed = step.seconds !== undefined
   const countdown = useCountdown(step.seconds ?? 0, paused || !timed, onDone)
+  // Prove del test: a tempo il cronometro sale finché tocchi Stop, poi si scrive il risultato.
+  const maxTimed = step.max === true && exercise.kind === 'time'
+  const [result, setResult] = useState<number | null>(null)
+  const elapsed = useStopwatch(paused || !maxTimed || result !== null)
   const color = CATEGORIES[exercise.category].color
   const figureBig = useAppStore((s) => s.settings.figureBig)
   const setSetting = useAppStore((s) => s.setSetting)
@@ -133,7 +200,17 @@ function WorkView({
   )
 
   const counter = (small: boolean) =>
-    timed ? (
+    step.max ? (
+      maxTimed ? (
+        <BigNumber size={small ? 'sm' : 'lg'} className={cn('text-accent', paused && 'opacity-40')}>
+          {formatClock(elapsed)}
+        </BigNumber>
+      ) : (
+        <p className={cn('text-center font-display leading-none font-extrabold text-accent uppercase', small ? 'text-2xl' : 'text-6xl')}>
+          Più che puoi
+        </p>
+      )
+    ) : timed ? (
       <div className="flex w-full flex-col items-center">
         <BigNumber size={small ? 'sm' : 'lg'} className={cn(paused && 'opacity-40')}>
           {formatClock(countdown.remainingSec)}
@@ -172,59 +249,80 @@ function WorkView({
         <p className="mt-1 font-display text-3xl font-bold text-accent uppercase">Lato {step.side}</p>
       )}
 
-      {/* Una cosa in grande al centro, l'altra piccola nell'angolo: toccando l'angolo si scambiano. */}
-      <div className="flex min-h-0 flex-1 flex-col py-2">
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
-          {figureBig ? figure('h-full max-h-full w-full') : counter(false)}
-        </div>
-        <div className="flex items-end justify-between gap-3 pt-2">
-          <div className="flex min-w-0 flex-col items-start gap-1.5">
-            {voiceOn && voiceMissing && (
-              <p className="text-xs text-accent">Manca la voce italiana sul telefono: vedi Impostazioni.</p>
-            )}
-            <VoiceToggle />
-          </div>
-          <button
-            type="button"
-            onClick={() => setSetting('figureBig', !figureBig)}
-            aria-label={figureBig ? 'Ingrandisci il tempo' : "Ingrandisci l'omino"}
-            className="relative flex h-28 w-[44%] items-center justify-center overflow-hidden rounded-xl border bg-card px-3 transition-colors active:bg-secondary"
-          >
-            {figureBig ? counter(true) : figure('h-full w-full')}
-            <Maximize2 className="absolute top-2 right-2 size-4 text-muted-foreground" />
-          </button>
-        </div>
-      </div>
-
-      <button
-        className="mb-4 flex items-start gap-3 rounded-xl border bg-card p-3 text-left"
-        onClick={() => onInfo(exercise)}
-      >
-        <div className="flex-1 space-y-1.5 text-sm">
-          <ul className="space-y-0.5 text-muted-foreground">
-            {exercise.cues.slice(0, 2).map((cue) => (
-              <li key={cue}>· {cue}</li>
-            ))}
-          </ul>
-          {exercise.why && <p className="text-accent">{exercise.why}</p>}
-        </div>
-        <Info className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
-      </button>
-
-      {timed ? (
-        <div className="grid grid-cols-[1fr_auto] gap-3">
-          <Button size="xl" variant="secondary" className="h-24 text-3xl" onClick={onTogglePause}>
-            {paused ? <Play className="size-8 fill-current" /> : <Pause className="size-8 fill-current" />}
-            {paused ? 'Riprendi' : 'Pausa'}
-          </Button>
-          <Button size="xl" variant="outline" className="h-24" onClick={onDone} aria-label="Fatto, avanti">
-            <Check className="size-8" />
-          </Button>
-        </div>
+      {result !== null ? (
+        <ResultEntry
+          initial={result}
+          unit={maxTimed ? 'secondi' : 'rip.'}
+          question={maxTimed ? 'Quanto hai tenuto?' : 'Quante ne hai fatte?'}
+          onSave={onResult}
+        />
       ) : (
-        <Button size="xl" className="h-28 w-full text-5xl" onClick={onDone}>
-          <Check className="size-10" strokeWidth={3} /> Fatto
-        </Button>
+        <>
+          {/* Una cosa in grande al centro, l'altra piccola nell'angolo: toccando l'angolo si scambiano. */}
+          <div className="flex min-h-0 flex-1 flex-col py-2">
+            <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+              {figureBig ? figure('h-full max-h-full w-full') : counter(false)}
+            </div>
+            <div className="flex items-end justify-between gap-3 pt-2">
+              <div className="flex min-w-0 flex-col items-start gap-1.5">
+                {voiceOn && voiceMissing && (
+                  <p className="text-xs text-accent">Manca la voce italiana sul telefono: vedi Impostazioni.</p>
+                )}
+                <VoiceToggle />
+              </div>
+              <button
+                type="button"
+                onClick={() => setSetting('figureBig', !figureBig)}
+                aria-label={figureBig ? 'Ingrandisci il tempo' : "Ingrandisci l'omino"}
+                className="relative flex h-28 w-[44%] items-center justify-center overflow-hidden rounded-xl border bg-card px-3 transition-colors active:bg-secondary"
+              >
+                {figureBig ? counter(true) : figure('h-full w-full')}
+                <Maximize2 className="absolute top-2 right-2 size-4 text-muted-foreground" />
+              </button>
+            </div>
+          </div>
+
+          <button
+            className="mb-4 flex items-start gap-3 rounded-xl border bg-card p-3 text-left"
+            onClick={() => onInfo(exercise)}
+          >
+            <div className="flex-1 space-y-1.5 text-sm">
+              <ul className="space-y-0.5 text-muted-foreground">
+                {exercise.cues.slice(0, 2).map((cue) => (
+                  <li key={cue}>· {cue}</li>
+                ))}
+              </ul>
+              {exercise.why && <p className="text-accent">{exercise.why}</p>}
+            </div>
+            <Info className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
+          </button>
+
+          {step.max ? (
+            <Button
+              size="xl"
+              variant="accent"
+              className="mb-4 h-28 w-full text-5xl"
+              onClick={() => setResult(maxTimed ? Math.round(elapsed) : (previousResult ?? 10))}
+            >
+              {maxTimed ? <Square className="size-9 fill-current" /> : <Check className="size-10" strokeWidth={3} />}
+              {maxTimed ? 'Stop' : 'Fatto'}
+            </Button>
+          ) : timed ? (
+            <div className="grid grid-cols-[1fr_auto] gap-3">
+              <Button size="xl" variant="secondary" className="h-24 text-3xl" onClick={onTogglePause}>
+                {paused ? <Play className="size-8 fill-current" /> : <Pause className="size-8 fill-current" />}
+                {paused ? 'Riprendi' : 'Pausa'}
+              </Button>
+              <Button size="xl" variant="outline" className="h-24" onClick={onDone} aria-label="Fatto, avanti">
+                <Check className="size-8" />
+              </Button>
+            </div>
+          ) : (
+            <Button size="xl" className="h-28 w-full text-5xl" onClick={onDone}>
+              <Check className="size-10" strokeWidth={3} /> Fatto
+            </Button>
+          )}
+        </>
       )}
     </div>
   )
@@ -298,7 +396,9 @@ function DoneView({ entry, exerciseCount }: { entry: Entry; exerciseCount: numbe
   const navigate = useNavigate()
   const { stats } = useStats()
   const current = useAppStore((s) => s.entries.find((e) => e.id === entry.id)) ?? entry
+  const entries = useAppStore((s) => s.entries)
   const updateEntry = useAppStore((s) => s.updateEntry)
+  const tests = current.type === 'test' ? testHistory(entries) : []
   const [noteOpen, setNoteOpen] = useState(false)
   const voiceOn = useAppStore((s) => s.settings.voice)
   const voiceName = useAppStore((s) => s.settings.voiceName)
@@ -329,10 +429,21 @@ function DoneView({ entry, exerciseCount }: { entry: Entry; exerciseCount: numbe
       <div>
         <h1 className="font-display text-7xl font-extrabold text-primary uppercase">Fatto!</h1>
         <p className="text-muted-foreground">
-          {current.type === 'mini' ? 'Versione mini' : 'Allenamento completo'} ·{' '}
+          {current.type === 'test' ? 'Test di forma' : current.type === 'mini' ? 'Versione mini' : 'Allenamento completo'} ·{' '}
           {formatDuration(current.durationSec ?? 0)} · {exerciseCount} esercizi
         </p>
       </div>
+
+      {current.type === 'test' && (
+        <div className="w-full rounded-xl border border-accent/40 bg-accent/10 p-3">
+          <TestResults rows={testRows(tests)} />
+          <p className="mt-2 text-sm text-muted-foreground">
+            {tests.length > 1
+              ? 'In verde: quanto sei migliorato dal primo test.'
+              : `Il tuo punto di partenza. Li rifai alla settimana ${nextTestWeek(stats.phase.weekNumber)}.`}
+          </p>
+        </div>
+      )}
 
       <div className="flex items-center gap-3">
         <Flame className="size-12 fill-accent/25 text-accent" />
@@ -388,6 +499,8 @@ export function SessionScreen() {
   const active = useAppStore((s) => s.active)
   const settings = useAppStore((s) => s.settings)
   const setStepIndex = useAppStore((s) => s.setStepIndex)
+  const setResult = useAppStore((s) => s.setResult)
+  const entries = useAppStore((s) => s.entries)
   const clearActive = useAppStore((s) => s.clearActive)
   const addEntry = useAppStore((s) => s.addEntry)
 
@@ -429,6 +542,7 @@ export function SessionScreen() {
   const doneWork = steps.slice(0, index).filter((s) => s.kind === 'work').length
   const nextWork = steps.slice(index + 1).find((s): s is WorkStep => s.kind === 'work')
   const paused = userPaused || exitDialogOpen || info !== null
+  const lastTest = session.test ? testHistory(entries).at(-1) : undefined
 
   const signal = (times: number) => {
     if (settings.sound) beep(times)
@@ -445,10 +559,12 @@ export function SessionScreen() {
       return
     }
     const entry = addEntry({
-      type: mini ? 'mini' : 'workout',
+      type: session.test ? 'test' : mini ? 'mini' : 'workout',
       date: today,
       sessionId: session.id,
       durationSec: Math.round((Date.now() - active.startedAt) / 1000),
+      // dallo store, non da `active`: il risultato dell'ultima prova è appena stato salvato
+      test: session.test ? (useAppStore.getState().active?.results ?? {}) : undefined,
     })
     setDoneExercises(new Set(steps.flatMap((s) => (s.kind === 'work' ? [s.exercise.id] : []))).size)
     setDoneEntry(entry)
@@ -509,6 +625,11 @@ export function SessionScreen() {
           }}
           onInfo={setInfo}
           intro={intro!}
+          previousResult={step.max ? lastTest?.test?.[step.exercise.id] : undefined}
+          onResult={(value) => {
+            setResult(step.exercise.id, value)
+            goTo(index + 1)
+          }}
         />
       ) : (
         <RestView

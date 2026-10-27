@@ -1,5 +1,6 @@
 import type { Entry, EntryType, Phase, Plan } from '@/data/types'
 import { addDays, diffDays, mondayOf, weekDays, weekdayIndex } from './dates'
+import { isTestDue } from './fitnessTest'
 
 /*
  * Regole della streak (decise in fase di design):
@@ -9,10 +10,10 @@ import { addDays, diffDays, mondayOf, weekDays, weekdayIndex } from './dates'
  * - 1 freeze a settimana, non si accumula, vale solo per un imprevisto;
  * - saltare perché "non mi va" azzera la streak subito;
  * - spostare un allenamento a un altro giorno della stessa settimana non è saltare.
- * Un giro in moto e la versione mini contano come allenamento. Al massimo un allenamento al giorno.
+ * Un giro in moto, la versione mini e il test di forma contano come allenamento. Al massimo un allenamento al giorno.
  */
 
-const ACTIVITY_TYPES: ReadonlySet<EntryType> = new Set(['workout', 'mini', 'ride'])
+const ACTIVITY_TYPES: ReadonlySet<EntryType> = new Set(['workout', 'mini', 'ride', 'test'])
 
 export function isActivity(entry: Entry): boolean {
   return ACTIVITY_TYPES.has(entry.type)
@@ -49,6 +50,8 @@ export interface Stats {
   week: WeekStatus
   phase: PhaseInfo
   nextSessionId: string
+  /** Il prossimo allenamento è il test di forma. */
+  testDue: boolean
 }
 
 export function phaseForWeek(plan: Plan, weekIndex: number) {
@@ -180,5 +183,6 @@ export function computeStats(
       phaseStartWeek,
     },
     nextSessionId: phase.rotation[sessionsInPhase % phase.rotation.length],
+    testDue: isTestDue(entries, startDate, today),
   }
 }

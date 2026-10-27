@@ -10,6 +10,7 @@ import { COOLDOWN } from '@/data/plan'
 import type { BodyZone } from '@/data/types'
 import { addDays } from '@/lib/dates'
 import { useToday } from '@/lib/hooks'
+import { isActivity } from '@/lib/streak'
 import { buildSteps, estimateDurationSec } from '@/lib/session'
 import { cn } from '@/lib/utils'
 import { useAppStore } from '@/store/useAppStore'
@@ -50,9 +51,7 @@ export function RideScreen() {
   const [note, setNote] = useState('')
 
   const date = day === 'oggi' ? today : addDays(today, -1)
-  const alreadyActive = entries.some(
-    (e) => e.date === date && (e.type === 'workout' || e.type === 'mini' || e.type === 'ride'),
-  )
+  const alreadyActive = entries.some((e) => e.date === date && isActivity(e))
 
   const save = () => {
     const pump = Number.parseInt(pumpAfter, 10)

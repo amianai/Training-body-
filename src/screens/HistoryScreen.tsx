@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
-import { Check, ChevronLeft, ChevronRight, Motorbike, Snowflake, Trash2, X, Zap } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Motorbike, Snowflake, Timer, Trash2, X, Zap } from 'lucide-react'
 
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { ScreenHeader } from '@/components/ScreenHeader'
 import { Button } from '@/components/ui/button'
+import { getExercise } from '@/data/exercises'
 import { getSession } from '@/data/plan'
 import type { Entry, Feeling } from '@/data/types'
 import { addDays, diffDays, formatDuration, formatLong, formatMonth, mondayOf } from '@/lib/dates'
@@ -26,10 +27,10 @@ function shiftMonth(month: string, delta: number): string {
   return `${Math.floor(index / 12)}-${String((index % 12) + 1).padStart(2, '0')}`
 }
 
-type DayKind = 'workout' | 'mini' | 'ride' | 'freeze' | 'skip' | null
+type DayKind = 'test' | 'workout' | 'mini' | 'ride' | 'freeze' | 'skip' | null
 
 function dayKind(list: Entry[]): DayKind {
-  for (const kind of ['workout', 'mini', 'ride', 'freeze', 'skip'] as const) {
+  for (const kind of ['test', 'workout', 'mini', 'ride', 'freeze', 'skip'] as const) {
     if (list.some((e) => e.type === kind)) return kind
   }
   return null
@@ -59,6 +60,14 @@ function EntryCard({ entry, onDelete }: { entry: Entry; onDelete: () => void }) 
       if (entry.ride?.pumpAfterMin) details.push(`avambracci duri dopo ${entry.ride.pumpAfterMin} min`)
       break
     }
+    case 'test':
+      icon = <Timer className="size-5" />
+      title = 'Test di forma'
+      for (const [id, value] of Object.entries(entry.test ?? {})) {
+        const exercise = getExercise(id)
+        details.push(`${exercise.name} ${value}${exercise.kind === 'time' ? ' s' : ''}`)
+      }
+      break
     case 'freeze':
       icon = <Snowflake className="size-5" />
       title = 'Freeze'
@@ -77,6 +86,7 @@ function EntryCard({ entry, onDelete }: { entry: Entry; onDelete: () => void }) 
           entry.type === 'workout' && 'bg-primary text-primary-foreground',
           entry.type === 'mini' && 'border-2 border-primary text-primary',
           entry.type === 'ride' && 'bg-accent text-accent-foreground',
+          entry.type === 'test' && 'border-2 border-accent text-accent',
           entry.type === 'freeze' && 'border-2 border-freeze/60 text-freeze',
           entry.type === 'skip' && 'border-2 border-destructive/60 text-destructive',
         )}
@@ -197,6 +207,7 @@ export function HistoryScreen() {
                     kind === 'workout' && 'bg-primary text-primary-foreground',
                     kind === 'mini' && 'border-2 border-primary text-primary',
                     kind === 'ride' && 'bg-accent text-accent-foreground',
+                    kind === 'test' && 'border-2 border-accent text-accent',
                     kind === 'freeze' && 'border-2 border-freeze/60 text-freeze',
                     kind === 'skip' && 'border-2 border-destructive/60 text-destructive',
                   )}
@@ -212,6 +223,7 @@ export function HistoryScreen() {
           <span className="flex items-center gap-1.5"><span className="size-3 rounded-full bg-primary" /> allenamento</span>
           <span className="flex items-center gap-1.5"><span className="size-3 rounded-full border-2 border-primary" /> mini</span>
           <span className="flex items-center gap-1.5"><span className="size-3 rounded-full bg-accent" /> moto</span>
+          <span className="flex items-center gap-1.5"><span className="size-3 rounded-full border-2 border-accent" /> test</span>
           <span className="flex items-center gap-1.5"><span className="size-3 rounded-full border-2 border-freeze/60" /> freeze</span>
           <span className="flex items-center gap-1.5"><span className="size-3 rounded-full border-2 border-destructive/60" /> saltato</span>
         </div>

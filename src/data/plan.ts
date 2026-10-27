@@ -260,6 +260,7 @@ export const PRACTICE: Session = {
         { exerciseId: 'e4', seconds: 8 },
         { exerciseId: 'e11', seconds: 8 },
         { exerciseId: 'e12', reps: 3 },
+        { exerciseId: 'e13', seconds: 8 },
       ],
     },
     {
@@ -323,7 +324,42 @@ export const COOLDOWN: Session = {
   ],
 }
 
-const EXTRA = [PRACTICE, COOLDOWN]
+/**
+ * Test di forma: alla settimana 1 e poi ogni 4 settimane, al posto di un allenamento.
+ * Quattro prove al massimo, con 2 minuti per recuperare tra una e l'altra.
+ */
+export const FITNESS_TEST: Session = {
+  id: 'test',
+  name: 'Test di forma',
+  focus: 'Quattro prove al massimo: da dove parti e quanto migliori',
+  test: true,
+  blocks: [
+    {
+      title: 'Riscaldamento',
+      rounds: 1,
+      restBetweenItems: 10,
+      restAfter: 60,
+      items: [
+        { exerciseId: 'm1', seconds: 30 },
+        { exerciseId: 'm2', reps: 6 },
+        { exerciseId: 'f11', seconds: 30 },
+      ],
+    },
+    {
+      title: 'Test',
+      rounds: 1,
+      restBetweenItems: 120,
+      items: [
+        { exerciseId: 'f1', max: true },
+        { exerciseId: 'f14', max: true },
+        { exerciseId: 'f8', max: true },
+        { exerciseId: 'e13', max: true },
+      ],
+    },
+  ],
+}
+
+const EXTRA = [PRACTICE, COOLDOWN, FITNESS_TEST]
 
 export function getSession(id: string) {
   return EXTRA.find((s) => s.id === id) ?? PLAN.sessions.find((s) => s.id === id)
