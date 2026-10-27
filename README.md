@@ -60,9 +60,8 @@ Si possono rigenerare con `npx shadcn@latest add <componente>` quando serve.
 
 ## Metterla sul Pixel
 
-1. Su [vercel.com](https://vercel.com) importa questo repository da GitHub.
-2. In **Root Directory** scegli `allenamento`. Il resto (Vite, `npm run build`, cartella `dist`) Vercel lo riconosce da solo.
-3. Apri l'indirizzo dal Chrome del Pixel → menu ⋮ → **Aggiungi a schermata Home** / **Installa app**.
+1. Su [vercel.com](https://vercel.com) importa questo repository da GitHub e premi **Deploy**: Vite, `npm run build` e la cartella `dist` li riconosce da solo.
+2. Apri l'indirizzo dal Chrome del Pixel → menu ⋮ → **Aggiungi a schermata Home** / **Installa app**.
 
 Vercel pubblica in produzione il branch principale. Gli altri branch ricevono un indirizzo di anteprima.
 
