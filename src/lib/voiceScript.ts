@@ -1,4 +1,4 @@
-import { PLAN, PRACTICE } from '@/data/plan'
+import { COOLDOWN, PLAN, PRACTICE } from '@/data/plan'
 import type { Category, Exercise } from '@/data/types'
 import { buildSteps, type Side, type Step, type WorkStep } from './session'
 
@@ -105,7 +105,7 @@ export function allClips(): Clip[] {
     if (seen && seen.text !== c.text) throw new Error(`Clip ${c.id} con due testi diversi`)
     byId.set(c.id, c)
   }
-  for (const session of [...PLAN.sessions, PRACTICE]) {
+  for (const session of [...PLAN.sessions, PRACTICE, COOLDOWN]) {
     for (const mini of [false, true]) {
       const steps = buildSteps(session, { mini })
       steps.forEach((_, i) => introAt(steps, i)?.clips.forEach(add))

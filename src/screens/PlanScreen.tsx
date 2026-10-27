@@ -8,19 +8,45 @@ import { ScreenHeader } from '@/components/ScreenHeader'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { getExercise } from '@/data/exercises'
-import { PLAN, PRACTICE, getSession } from '@/data/plan'
-import type { Exercise } from '@/data/types'
+import { COOLDOWN, PLAN, PRACTICE, getSession } from '@/data/plan'
+import type { Exercise, Session } from '@/data/types'
 import { useStats } from '@/lib/hooks'
 import { buildSteps, estimateDurationSec, targetLabel } from '@/lib/session'
 import { cn } from '@/lib/utils'
 import { useAppStore } from '@/store/useAppStore'
 
-export function PlanScreen() {
-  const { stats } = useStats()
-  const [info, setInfo] = useState<Exercise | null>(null)
+/** Sessione extra da far partire quando vuoi: non conta per la streak. */
+function ExtraCard({ session, description, label }: { session: Session; description: string; label: string }) {
   const navigate = useNavigate()
   const startSession = useAppStore((s) => s.startSession)
   const busy = useAppStore((s) => s.active !== null)
+  return (
+    <Card className="gap-3">
+      <CardHeader>
+        <div className="font-display text-2xl leading-none font-bold uppercase">{session.name}</div>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </CardHeader>
+      <CardContent>
+        <Button
+          size="lg"
+          className="w-full"
+          disabled={busy}
+          onClick={() => {
+            startSession(session.id, false)
+            navigate('/sessione')
+          }}
+        >
+          <Play className="fill-current" /> {busy ? "Finisci prima l'allenamento in corso" : label}
+        </Button>
+      </CardContent>
+    </Card>
+  )
+}
+
+export function PlanScreen() {
+  const { stats } = useStats()
+  const [info, setInfo] = useState<Exercise | null>(null)
+  const cooldownMinutes = Math.round(estimateDurationSec(buildSteps(COOLDOWN)) / 60)
 
   const phases = PLAN.phases.map((phase, index) => {
     const from = 1 + PLAN.phases.slice(0, index).reduce((sum, p) => sum + p.weeks, 0)
@@ -42,27 +68,16 @@ export function PlanScreen() {
         </div>
       )}
 
-      <Card className="gap-3">
-        <CardHeader>
-          <div className="font-display text-2xl leading-none font-bold uppercase">Prova tutti gli esercizi</div>
-          <p className="text-sm text-muted-foreground">
-            Tutti gli esercizi in fila, pochi secondi l'uno, per vedere come si fanno. Non conta per la streak.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <Button
-            size="lg"
-            className="w-full"
-            disabled={busy}
-            onClick={() => {
-              startSession(PRACTICE.id, false)
-              navigate('/sessione')
-            }}
-          >
-            <Play className="fill-current" /> {busy ? 'Finisci prima l\'allenamento in corso' : 'Inizia la prova'}
-          </Button>
-        </CardContent>
-      </Card>
+      <ExtraCard
+        session={PRACTICE}
+        description="Tutti gli esercizi in fila, pochi secondi l'uno, per vedere come si fanno. Non conta per la streak."
+        label="Inizia la prova"
+      />
+      <ExtraCard
+        session={COOLDOWN}
+        description={`${cooldownMinutes} minuti per avambracci, schiena e anche, la sera dopo un giro in moto. Non conta per la streak.`}
+        label="Inizia lo scarico"
+      />
 
       <section className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold text-muted-foreground uppercase">Fasi</h2>

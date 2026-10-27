@@ -45,8 +45,10 @@ export interface Session {
   name: string
   focus: string
   blocks: Block[]
-  /** Sessione di prova: non entra nelle fasi e non viene salvata. */
+  /** Sessione extra (prova, scarico): non entra nelle fasi e non viene salvata. */
   practice?: boolean
+  /** Messaggio in home alla fine di una sessione extra. */
+  doneMessage?: string
 }
 
 export interface Phase {

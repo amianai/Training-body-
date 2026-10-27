@@ -226,6 +226,7 @@ export const PRACTICE: Session = {
   name: 'Prova: tutti gli esercizi',
   focus: 'Un giro veloce di tutti gli esercizi, per vedere come si fanno',
   practice: true,
+  doneMessage: 'Prova finita: non conta per la streak.',
   blocks: [
     {
       title: 'Stretching',
@@ -278,6 +279,52 @@ export const PRACTICE: Session = {
   ],
 }
 
+/**
+ * Scarico dopo un giro in moto, la sera: avambracci induriti, schiena e anche. Non conta come
+ * allenamento (conta già il giro) e non si salva.
+ */
+export const COOLDOWN: Session = {
+  id: 'scarico',
+  name: 'Scarico post-giro',
+  focus: 'Avambracci, schiena e anche, dopo la moto',
+  practice: true,
+  doneMessage: 'Scarico fatto: buon recupero.',
+  blocks: [
+    {
+      title: 'Avambracci',
+      rounds: 1,
+      restBetweenItems: 5,
+      restAfter: 5,
+      items: [
+        { exerciseId: 'm1', seconds: 40 },
+        { exerciseId: 's1', seconds: 30 },
+        { exerciseId: 's2', seconds: 30 },
+      ],
+    },
+    {
+      title: 'Schiena',
+      rounds: 1,
+      restBetweenItems: 5,
+      restAfter: 5,
+      items: [
+        { exerciseId: 'm2', reps: 8 },
+        { exerciseId: 'm3', reps: 6 },
+      ],
+    },
+    {
+      title: 'Anche e gambe',
+      rounds: 1,
+      restBetweenItems: 5,
+      items: [
+        { exerciseId: 's5', seconds: 30 },
+        { exerciseId: 's7', seconds: 30 },
+      ],
+    },
+  ],
+}
+
+const EXTRA = [PRACTICE, COOLDOWN]
+
 export function getSession(id: string) {
-  return id === PRACTICE.id ? PRACTICE : PLAN.sessions.find((s) => s.id === id)
+  return EXTRA.find((s) => s.id === id) ?? PLAN.sessions.find((s) => s.id === id)
 }

@@ -437,11 +437,11 @@ export function SessionScreen() {
 
   const finish = () => {
     if (session.practice) {
-      // la prova serve solo a vedere gli esercizi: non va nello storico e non conta per la streak
+      // prova e scarico sono extra: non vanno nello storico e non contano per la streak
       leavingRef.current = true
       setPracticeDone(true)
       clearActive()
-      navigate('/', { replace: true, state: { flash: 'Prova finita: non conta per la streak.' } })
+      navigate('/', { replace: true, state: { flash: session.doneMessage } })
       return
     }
     const entry = addEntry({

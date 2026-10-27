@@ -1,14 +1,16 @@
 import { useState, type ReactNode } from 'react'
-import { Minus, Motorbike, Plus } from 'lucide-react'
+import { Minus, Motorbike, Play, Plus } from 'lucide-react'
 import { useNavigate } from 'react-router'
 
 import { ScreenHeader } from '@/components/ScreenHeader'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { Textarea } from '@/components/ui/textarea'
+import { COOLDOWN } from '@/data/plan'
 import type { BodyZone } from '@/data/types'
 import { addDays } from '@/lib/dates'
 import { useToday } from '@/lib/hooks'
+import { buildSteps, estimateDurationSec } from '@/lib/session'
 import { cn } from '@/lib/utils'
 import { useAppStore } from '@/store/useAppStore'
 
@@ -36,6 +38,10 @@ export function RideScreen() {
   const today = useToday()
   const addEntry = useAppStore((s) => s.addEntry)
   const entries = useAppStore((s) => s.entries)
+  const startSession = useAppStore((s) => s.startSession)
+  const busy = useAppStore((s) => s.active !== null)
+  /** Giro salvato oggi: prima di tornare alla home si propone lo scarico. */
+  const [savedFlash, setSavedFlash] = useState<string | null>(null)
 
   const [day, setDay] = useState<'oggi' | 'ieri'>('oggi')
   const [minutes, setMinutes] = useState(60)
@@ -60,14 +66,50 @@ export function RideScreen() {
         pumpAfterMin: Number.isFinite(pump) && pump > 0 ? pump : undefined,
       },
     })
-    navigate('/', {
-      replace: true,
-      state: {
-        flash: alreadyActive
-          ? 'Giro salvato nel diario.'
-          : 'Giro salvato: conta come allenamento per la streak.',
-      },
-    })
+    const flash = alreadyActive ? 'Giro salvato nel diario.' : 'Giro salvato: conta come allenamento per la streak.'
+    // Lo scarico serve la sera del giro; per un giro di ieri è tardi.
+    if (day === 'oggi' && !busy) setSavedFlash(flash)
+    else navigate('/', { replace: true, state: { flash } })
+  }
+
+  if (savedFlash) {
+    const minutes = Math.round(estimateDurationSec(buildSteps(COOLDOWN)) / 60)
+    return (
+      <div className="safe-bottom mx-auto flex min-h-dvh max-w-lg flex-col gap-6 px-4 pb-8">
+        <ScreenHeader title="Giro in moto" />
+        <div className="flex flex-1 flex-col justify-center gap-6 text-center">
+          <Motorbike className="mx-auto size-14 text-accent" />
+          <p className="text-lg font-semibold">{savedFlash}</p>
+          <div className="flex flex-col gap-2 rounded-xl border bg-card p-5 text-left">
+            <p className="font-display text-3xl leading-none font-bold uppercase">{COOLDOWN.name}</p>
+            <p className="text-muted-foreground">
+              {minutes} minuti per avambracci, schiena e anche, adesso che sono induriti. Facoltativo: non conta
+              come allenamento.
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Button
+            size="xl"
+            className="w-full"
+            onClick={() => {
+              startSession(COOLDOWN.id, false)
+              navigate('/sessione', { replace: true })
+            }}
+          >
+            <Play className="size-7 fill-current" /> Inizia lo scarico
+          </Button>
+          <Button
+            variant="ghost"
+            size="lg"
+            className="w-full text-muted-foreground"
+            onClick={() => navigate('/', { replace: true, state: { flash: savedFlash } })}
+          >
+            Non ora
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
