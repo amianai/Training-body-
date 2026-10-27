@@ -26,3 +26,4 @@ dist-ssr
 
 # Campioni per scegliere la voce guida (scripts/voice/generate.py --prova)
 scripts/voice/prova
+__pycache__/
