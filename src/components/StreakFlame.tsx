@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react'
 
+import { FLAME_STAGE_STARTS } from '@/lib/flame'
+
 /*
  * La fiamma della streak: stessa forma dell'icona Lucide, disegnata a strati con un viso.
  * Cresce con gli allenamenti di fila e a certe soglie cambia stadio (colore, scintille, orbite…).
- * Se la streak si spezza torna a zero e quindi alla brace.
+ * Lo stadio arriva da fuori (src/lib/flame.ts): se la streak si spezza la fiamma scende di uno stadio.
  */
 
 type RGB = [number, number, number]
@@ -11,8 +13,6 @@ type Eyes = 'closed' | 'open' | 'happy' | 'fierce'
 type Mouth = 'dot' | 'smile' | 'grin' | 'open'
 
 interface Stage {
-  /** Allenamenti di fila da cui parte lo stadio (3 a settimana: 24 sono circa 8 settimane). */
-  at: number
   name: string
   size: number
   outer: string
@@ -34,20 +34,18 @@ const WARM = { outer: '#ff7a1a', mid: '#ffb020', core: '#fff0b0', line: '#3a1400
 const VIOLET = { outer: '#8b3dff', mid: '#c47bff', core: '#f6e3ff', line: '#1c0b38' }
 
 const STAGES: Stage[] = [
-  { at: 0, name: 'Brace', size: 0.34, outer: '#6b5548', mid: '#9a7a66', core: '#d8c2ae', line: '#1d1410', spark: 0, tongues: false, orbs: 0, ring: false, arcs: false, glow: 0, eyes: 'closed', mouth: 'dot' },
-  { at: 1, name: 'Scintilla', size: 0.5, ...WARM, spark: 0, tongues: false, orbs: 0, ring: false, arcs: false, glow: 0.06, eyes: 'open', mouth: 'dot' },
-  { at: 3, name: 'Fiamma', size: 0.7, ...WARM, spark: 0, tongues: false, orbs: 0, ring: false, arcs: false, glow: 0.12, eyes: 'open', mouth: 'smile' },
-  { at: 6, name: 'Fiamma viva', size: 0.82, ...WARM, spark: 5, tongues: false, orbs: 0, ring: false, arcs: false, glow: 0.18, eyes: 'happy', mouth: 'smile' },
-  { at: 10, name: 'Falò', size: 0.95, ...WARM, core: '#fff4c0', spark: 9, tongues: true, orbs: 0, ring: false, arcs: false, glow: 0.24, eyes: 'happy', mouth: 'grin' },
-  { at: 14, name: 'Fuoco viola', size: 1, ...VIOLET, spark: 11, tongues: true, orbs: 0, ring: false, arcs: false, glow: 0.3, eyes: 'open', mouth: 'grin' },
-  { at: 20, name: 'Orbite', size: 1.06, ...VIOLET, spark: 13, tongues: true, orbs: 3, ring: false, arcs: false, glow: 0.34, eyes: 'fierce', mouth: 'grin' },
-  { at: 24, name: 'Evoluzione', size: 1.16, outer: '#5b3cff', mid: '#35d0ff', core: '#ffffff', line: '#0f0a38', spark: 17, tongues: true, orbs: 5, ring: true, arcs: false, glow: 0.45, eyes: 'fierce', mouth: 'grin' },
-  { at: 36, name: 'Overpower', size: 1.3, outer: '#7a2cff', mid: '#3ae0ff', core: '#ffffff', line: '#0f0a38', spark: 26, tongues: true, orbs: 6, ring: true, arcs: true, glow: 0.7, eyes: 'fierce', mouth: 'open' },
+  { name: 'Brace', size: 0.34, outer: '#6b5548', mid: '#9a7a66', core: '#d8c2ae', line: '#1d1410', spark: 0, tongues: false, orbs: 0, ring: false, arcs: false, glow: 0, eyes: 'closed', mouth: 'dot' },
+  { name: 'Scintilla', size: 0.5, ...WARM, spark: 0, tongues: false, orbs: 0, ring: false, arcs: false, glow: 0.06, eyes: 'open', mouth: 'dot' },
+  { name: 'Fiamma', size: 0.7, ...WARM, spark: 0, tongues: false, orbs: 0, ring: false, arcs: false, glow: 0.12, eyes: 'open', mouth: 'smile' },
+  { name: 'Fiamma viva', size: 0.82, ...WARM, spark: 5, tongues: false, orbs: 0, ring: false, arcs: false, glow: 0.18, eyes: 'happy', mouth: 'smile' },
+  { name: 'Falò', size: 0.95, ...WARM, core: '#fff4c0', spark: 9, tongues: true, orbs: 0, ring: false, arcs: false, glow: 0.24, eyes: 'happy', mouth: 'grin' },
+  { name: 'Fuoco viola', size: 1, ...VIOLET, spark: 11, tongues: true, orbs: 0, ring: false, arcs: false, glow: 0.3, eyes: 'open', mouth: 'grin' },
+  { name: 'Orbite', size: 1.06, ...VIOLET, spark: 13, tongues: true, orbs: 3, ring: false, arcs: false, glow: 0.34, eyes: 'fierce', mouth: 'grin' },
+  { name: 'Evoluzione', size: 1.16, outer: '#5b3cff', mid: '#35d0ff', core: '#ffffff', line: '#0f0a38', spark: 17, tongues: true, orbs: 5, ring: true, arcs: false, glow: 0.45, eyes: 'fierce', mouth: 'grin' },
+  { name: 'Overpower', size: 1.3, outer: '#7a2cff', mid: '#3ae0ff', core: '#ffffff', line: '#0f0a38', spark: 26, tongues: true, orbs: 6, ring: true, arcs: true, glow: 0.7, eyes: 'fierce', mouth: 'open' },
 ]
 
-function flameStage(streak: number): number {
-  return STAGES.reduce((found, s, i) => (streak >= s.at ? i : found), 0)
-}
+if (STAGES.length !== FLAME_STAGE_STARTS.length) throw new Error('Gli stadi della fiamma non corrispondono alle soglie')
 
 const SHAPE = new Path2D('M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4Z')
 /** Il disegno è pensato su un quadrato di 420 punti; si mostra solo la parte centrale. */
@@ -70,13 +68,13 @@ interface Particle {
   k: number
 }
 
-export function StreakFlame({ streak, className }: { streak: number; className?: string }) {
+export function StreakFlame({ stage, className }: { stage: number; className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const streakRef = useRef(streak)
+  const stageRef = useRef(stage)
 
   useEffect(() => {
-    streakRef.current = streak
-  }, [streak])
+    stageRef.current = stage
+  }, [stage])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -85,7 +83,7 @@ export function StreakFlame({ streak, className }: { streak: number; className?:
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const px = canvas.width / VIEW.size
 
-    let st = flameStage(streakRef.current)
+    let st = stageRef.current
     const first = STAGES[st]
     let size = first.size
     let glow = first.glow
@@ -215,7 +213,7 @@ export function StreakFlame({ streak, className }: { streak: number; className?:
       last = now
       t += dt * (reduce ? 0.4 : 1)
 
-      const next = flameStage(streakRef.current)
+      const next = stageRef.current
       if (next !== st) {
         if (next > st) spawn(reduce ? 8 : 34, true)
         st = next
@@ -340,7 +338,7 @@ export function StreakFlame({ streak, className }: { streak: number; className?:
       width={256}
       height={256}
       role="img"
-      aria-label={`Fiamma della streak: ${STAGES[flameStage(streak)].name}`}
+      aria-label={`Fiamma della streak: ${STAGES[stage].name}`}
       className={className ?? 'size-28'}
     />
   )

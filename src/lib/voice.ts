@@ -16,6 +16,12 @@ export function isRecorded(spoken: Spoken): boolean {
   return spoken.clips.length > 0 && spoken.clips.every((c) => recordedText[c.id] === c.text)
 }
 
+declare global {
+  interface Window {
+    __VOCE__?: Record<string, string>
+  }
+}
+
 const synth = typeof window !== 'undefined' && 'speechSynthesis' in window ? window.speechSynthesis : null
 let voices: SpeechSynthesisVoice[] = []
 let version = 0
@@ -82,7 +88,8 @@ function playClips(spoken: Spoken) {
   const run: NonNullable<typeof playing> = { cancelled: false }
   playing = run
   const audios = spoken.clips.map((c) => {
-    const audio = new Audio(`${import.meta.env.BASE_URL}voce/${c.id}.mp3`)
+    // Nella pagina di prova su claude.ai gli audio sono dentro la pagina (window.__VOCE__).
+    const audio = new Audio(window.__VOCE__?.[c.id] ?? `${import.meta.env.BASE_URL}voce/${c.id}.mp3`)
     audio.preload = 'auto'
     return audio
   })

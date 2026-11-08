@@ -202,7 +202,7 @@ export function HomeScreen() {
       <Card className="gap-5">
         <CardContent className="flex items-end justify-between">
           <div className="flex items-center gap-1">
-            <StreakFlame streak={stats.streak} className="-mb-3 -ml-3 size-28 shrink-0" />
+            <StreakFlame stage={stats.flameStage} className="-mb-4 -ml-4 size-36 shrink-0" />
             <div>
               <div className="font-display text-7xl leading-none font-extrabold tabular">{stats.streak}</div>
               <div className="text-sm text-muted-foreground">

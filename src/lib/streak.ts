@@ -1,6 +1,7 @@
 import type { Entry, EntryType, Phase, Plan } from '@/data/types'
 import { addDays, diffDays, mondayOf, weekDays, weekdayIndex } from './dates'
 import { isTestDue } from './fitnessTest'
+import { flameStageFor } from './flame'
 
 /*
  * Regole della streak (decise in fase di design):
@@ -52,6 +53,8 @@ export interface Stats {
   nextSessionId: string
   /** Il prossimo allenamento è il test di forma. */
   testDue: boolean
+  /** Stadio della fiamma: segue la streak, ma una caduta lo fa scendere solo di uno. */
+  flameStage: number
 }
 
 export function phaseForWeek(plan: Plan, weekIndex: number) {
@@ -117,6 +120,12 @@ export function computeStats(
 
   let running = 0
   let best = 0
+  // Stadio minimo della fiamma: dopo una caduta si perde uno stadio, non tutta la fiamma.
+  let flameFloor = 0
+  const breakStreak = () => {
+    flameFloor = Math.max(0, Math.max(flameFloor, flameStageFor(running)) - 1)
+    running = 0
+  }
 
   for (let week = startWeek; week <= currentWeek; week = addDays(week, 7)) {
     for (const day of weekDays(week)) {
@@ -128,7 +137,7 @@ export function computeStats(
           countedToday = true
           best = Math.max(best, running)
         } else if (entry.type === 'skip') {
-          running = 0
+          breakStreak()
           countedToday = false
         }
       }
@@ -136,7 +145,7 @@ export function computeStats(
     if (week < currentWeek) {
       const target = weekTarget(plan, startDate, week, start)
       const covered = activeDays(week) + (hasFreeze(week) ? 1 : 0)
-      if (covered < target) running = 0
+      if (covered < target) breakStreak()
     }
   }
 
@@ -184,5 +193,6 @@ export function computeStats(
     },
     nextSessionId: phase.rotation[sessionsInPhase % phase.rotation.length],
     testDue: isTestDue(entries, startDate, today),
+    flameStage: Math.max(flameFloor, flameStageFor(running)),
   }
 }
