@@ -5,7 +5,7 @@ import type { Block, Plan, Session } from './types'
  * presa e avambracci, gambe in piedi, schiena, core ed equilibrio.
  * Quattro sessioni base; ogni fase usa le stesse sessioni a un livello più alto
  * (un giro in più dalla seconda fase, poi +2 ripetizioni e +5 secondi a livello).
- * Progressione presa dalla ricerca sull'enduro: 2, poi 3 sessioni a settimana, 20-30 minuti.
+ * Tre sessioni a settimana fin dall'inizio (la terza, all'inizio, è la giornata leggera D) e quattro nelle ultime due settimane.
  */
 
 const A: Session = {
@@ -149,7 +149,7 @@ const C: Session = {
   ],
 }
 
-/** Giornata leggera, solo nell'ultima fase: mobilità, equilibrio e stretching. */
+/** Giornata leggera: mobilità, equilibrio e stretching. Terzo allenamento delle prime due settimane e quarto del Picco. */
 const D: Session = {
   id: 'd',
   name: 'Mobilità e recupero',
@@ -206,14 +206,16 @@ export const PLAN: Plan = {
   name: 'La mia scheda',
   isExample: false,
   phases: [
-    { label: 'Adattamento', weeks: 2, sessionsPerWeek: 2, rotation: ['a1', 'b1'] },
+    { label: 'Adattamento', weeks: 2, sessionsPerWeek: 3, rotation: ['a1', 'b1', 'd1'] },
     { label: 'Base', weeks: 2, sessionsPerWeek: 3, rotation: ['a2', 'b2', 'c2'] },
     { label: 'Costruzione', weeks: 4, sessionsPerWeek: 3, rotation: ['a3', 'b3', 'c3'] },
-    { label: 'Sviluppo', weeks: 4, sessionsPerWeek: 3, rotation: ['a4', 'b4', 'c4', 'd4'] },
+    { label: 'Sviluppo', weeks: 2, sessionsPerWeek: 3, rotation: ['a4', 'b4', 'c4'] },
+    { label: 'Picco', weeks: 2, sessionsPerWeek: 4, rotation: ['a4', 'b4', 'c4', 'd4'] },
   ],
   sessions: [
     atLevel(A, 0),
     atLevel(B, 0),
+    atLevel(D, 0),
     ...[A, B, C].map((s) => atLevel(s, 1)),
     ...[A, B, C].map((s) => atLevel(s, 2)),
     ...[A, B, C, D].map((s) => atLevel(s, 3)),

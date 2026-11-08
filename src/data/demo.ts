@@ -106,6 +106,7 @@ const WEEKS: DemoEvent[][] = [
   [
     { day: 1, type: 'workout', feeling: 'facile', note: "15 flessioni di fila, all'inizio erano 10" },
     { day: 3, type: 'workout', feeling: 'giusto' },
+    { day: 4, type: 'workout', feeling: 'giusto' },
     { day: 5, type: 'ride', minutes: 90, fatigue: { avambracci: 4, braccia: 3, spalle: 3, schiena: 4, gambe: 4 }, pumpAfterMin: 30 },
   ],
   [

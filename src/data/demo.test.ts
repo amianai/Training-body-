@@ -21,8 +21,8 @@ describe('buildDemo', () => {
   it('racconta una streak lunga dopo qualche caduta', () => {
     const { startDate, entries } = buildDemo(today, [])
     const stats = computeStats(entries, PLAN, startDate, today)
-    expect(stats.streak).toBe(19)
-    expect(stats.best).toBe(19)
+    expect(stats.streak).toBe(20)
+    expect(stats.best).toBe(20)
     expect(stats.phase.weekNumber).toBe(14)
     expect(stats.activeToday).toBe(false)
   })

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Check, Clock, Flame, Motorbike, Play, Settings, Snowflake, Timer, Trophy } from 'lucide-react'
+import { Check, Clock, Motorbike, Play, Settings, Snowflake, Timer, Trophy } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router'
 
 import { CategoryBadge } from '@/components/CategoryBadge'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { StreakFlame } from '@/components/StreakFlame'
 import { TestResults } from '@/components/TestResults'
 import { WeekDots } from '@/components/WeekDots'
 import { Button } from '@/components/ui/button'
@@ -200,10 +201,8 @@ export function HomeScreen() {
       {/* Streak */}
       <Card className="gap-5">
         <CardContent className="flex items-end justify-between">
-          <div className="flex items-center gap-3">
-            <Flame
-              className={cn('size-14', stats.streak > 0 ? 'fill-accent/25 text-accent' : 'text-muted-foreground')}
-            />
+          <div className="flex items-center gap-1">
+            <StreakFlame streak={stats.streak} className="-mb-3 -ml-3 size-28 shrink-0" />
             <div>
               <div className="font-display text-7xl leading-none font-extrabold tabular">{stats.streak}</div>
               <div className="text-sm text-muted-foreground">
