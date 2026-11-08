@@ -36,6 +36,8 @@ export interface Pose {
 export type Decor =
   | { kind: 'line'; a: Pt; b: Pt; tone: 'moto' | 'prop'; front?: boolean }
   | { kind: 'stick' | 'bags' | 'cushion' }
+  /** Asciugamano arrotolato visto di lato. */
+  | { kind: 'roll'; at: Pt; r: number }
 
 export interface FigureSpec {
   frames: [Pose, Pose]
@@ -49,6 +51,8 @@ export interface FigureSpec {
   /** Interpola gli angoli così come sono scritti, anche facendo il giro lungo. */
   linear?: boolean
   decor?: Decor[]
+  /** Da dove si guarda, se non è di lato: scritto nello schema da allenatore. */
+  view?: string
   /** Angolo misurato nello schema da allenatore. */
   key?: 'elbow' | 'knee' | 'hip'
   /** Punto di cui lo schema disegna il percorso. */
@@ -186,7 +190,10 @@ export function frameBox(spec: FigureSpec): Box {
     }
     if (spec.decor?.some((d) => d.kind === 'bags')) pts.push([s.arms[0].end[0], s.arms[0].end[1] + 0.12])
   }
-  for (const d of spec.decor ?? []) if (d.kind === 'line') pts.push(d.a, d.b)
+  for (const d of spec.decor ?? []) {
+    if (d.kind === 'line') pts.push(d.a, d.b)
+    if (d.kind === 'roll') pts.push([d.at[0] - d.r, d.at[1] - d.r], [d.at[0] + d.r, d.at[1] + d.r])
+  }
   if (spec.ground !== false) pts.push([pts[0][0], GROUND + 0.02])
   const pad = 0.08
   let x0 = Math.min(...pts.map((p) => p[0])) - pad

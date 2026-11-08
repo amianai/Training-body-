@@ -55,12 +55,12 @@ export const FIGURES: Record<string, FigureSpec> = {
   },
   s7: {
     frames: [
-      { root: [0.46, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, { a: 95, b: 255, c: 180 }], arms: [{ a: 30, b: 10, c: 10 }, { target: [0.39, 0.36], bend: 1, c: 100 }] },
-      { root: [0.46, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, { a: 100, b: 250, c: 180 }], arms: [{ a: 30, b: 10, c: 10 }, { target: [0.375, 0.36], bend: 1, c: 100 }] },
+      { root: [0.46, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, { a: 92, b: 90, c: 0 }], arms: [{ target: [0.47, 0.36], bend: 1, c: 90 }, { a: 95, b: 90, c: 90 }] },
+      { root: [0.46, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, { a: 100, b: 262, c: 270 }], arms: [{ target: [0.386, 0.378], bend: 1, c: 100 }, { a: 95, b: 90, c: 90 }] },
     ],
-    hold: [0.8, 0.8],
-    move: 1.2,
-    phases: ['Tieni', 'Tira', 'Tieni', 'Molla'],
+    hold: [0.6, 1.2],
+    move: 1.3,
+    phases: ['In piedi', 'Tira il tallone', 'Tieni', 'Molla'],
   },
   s8: {
     frames: [
@@ -93,24 +93,28 @@ export const FIGURES: Record<string, FigureSpec> = {
     phases: ['Gatto', 'Inarca', 'Mucca', 'Arrotonda'],
   },
   m3: {
+    // Dall'alto, sdraiato su un fianco: le ginocchia piegate in avanti, il braccio sopra si apre come un libro.
     frames: [
-      { root: [0.4, 0.81], anchor: 'hip', torso: 0, neck: 0, legs: [{ a: 200, b: 160, c: 180 }, { a: 200, b: 160, c: 180 }], arms: [{ a: 5, b: 0, c: 0 }, { a: 10, b: 0, c: 0 }] },
-      { root: [0.4, 0.81], anchor: 'hip', torso: -15, neck: -25, legs: [{ a: 200, b: 160, c: 180 }, { a: 200, b: 160, c: 180 }], arms: [{ a: -170, b: -170, c: -170 }, { a: 10, b: 0, c: 0 }] },
+      { root: [0.35, 0.5], anchor: 'hip', torso: 0, neck: 0, legs: [{ a: 90, b: 180, c: 180 }, { a: 95, b: 185, c: 180 }], arms: [{ target: [0.66, 0.78], bend: -1, c: 90 }, { target: [0.66, 0.78], bend: -1, c: 90 }] },
+      { root: [0.35, 0.5], anchor: 'hip', torso: 0, neck: 0, legs: [{ a: 90, b: 180, c: 180 }, { a: 95, b: 185, c: 180 }], arms: [{ target: [0.66, 0.22], bend: 1, c: 270 }, { target: [0.66, 0.78], bend: -1, c: 90 }] },
     ],
-    hold: [0.4, 0.6],
-    move: 1.6,
-    linear: true,
+    hold: [0.5, 0.9],
+    move: 1.8,
+    ground: false,
+    view: 'Vista dall’alto',
     phases: ['Chiuso', 'Apri', 'Aperto', 'Chiudi'],
     trace: 'wrist',
   },
   m5: {
+    // Affondo basso, di lato: le braccia unite si aprono (una in alto, una in basso) mentre il busto ruota.
     frames: [
-      { root: [0.62, 0.845], anchor: 'ankle', torso: 352, neck: 5, legs: [{ a: 0, b: 100, c: 0 }, { a: 152, b: 152, c: 160 }], arms: [{ target: [0.72, G], bend: 1, c: 0 }, { a: 95, b: 95, c: 95 }] },
-      { root: [0.62, 0.845], anchor: 'ankle', torso: 350, neck: 300, legs: [{ a: 0, b: 100, c: 0 }, { a: 152, b: 152, c: 160 }], arms: [{ target: [0.72, G], bend: 1, c: 0 }, { a: 270, b: 270, c: 270 }] },
+      { root: [0.45, 0.57], anchor: 'hip', torso: 272, neck: 272, legs: [{ target: [0.686, 0.84], bend: -1, c: 0 }, { target: [0.17, 0.8], bend: -1, c: 100 }], arms: [{ a: 355, b: 355, c: 355 }, { a: 5, b: 5, c: 5 }] },
+      { root: [0.45, 0.57], anchor: 'hip', torso: 272, neck: 272, legs: [{ target: [0.686, 0.84], bend: -1, c: 0 }, { target: [0.17, 0.8], bend: -1, c: 100 }], arms: [{ a: 270, b: 270, c: 270 }, { a: 90, b: 90, c: 90 }] },
     ],
-    hold: [0.4, 0.6],
+    hold: [0.5, 0.8],
     move: 1.3,
-    phases: ['Giù', 'Apri', 'Su', 'Chiudi'],
+    phases: ['Giù', 'Ruota', 'Tieni', 'Chiudi'],
+    view: 'Il busto ruota: le braccia si aprono',
   },
   m7: {
     frames: [
@@ -167,13 +171,15 @@ export const FIGURES: Record<string, FigureSpec> = {
     phases: ['Strizza', 'Strizza', 'Strizza', 'Strizza'],
   },
   e11: {
+    // Di fronte: due piedi a terra, poi un piede si alza vicino al polpaccio e si resta in equilibrio.
     frames: [
-      { root: [0.48, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, { a: 0, b: 90, c: 15 }], arms: [{ a: 60, b: 30, c: 30 }, { a: 120, b: 150, c: 150 }] },
-      { root: [0.48, G - 0.02], anchor: 'ankle', torso: 273, neck: 272, legs: [STAND, { a: 8, b: 92, c: 15 }], arms: [{ a: 55, b: 25, c: 25 }, { a: 125, b: 155, c: 155 }] },
+      { root: [0.5, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [{ a: 87, b: 87, c: 0 }, { a: 93, b: 93, c: 180 }], arms: [{ a: 80, b: 85, c: 85 }, { a: 100, b: 95, c: 95 }] },
+      { root: [0.5, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [{ a: 87, b: 87, c: 0 }, { a: 120, b: 45, c: 0 }], arms: [{ a: 35, b: 25, c: 25 }, { a: 145, b: 155, c: 155 }] },
     ],
-    hold: [0.3, 0.3],
-    move: 1.4,
-    phases: ['Tieni', 'Tieni', 'Tieni', 'Tieni'],
+    hold: [0.5, 1.6],
+    move: 1.2,
+    view: 'Vista di fronte',
+    phases: ['Pronto', 'Alza', 'Tieni', 'Appoggia'],
   },
   p1: {
     frames: [
@@ -194,40 +200,45 @@ export const FIGURES: Record<string, FigureSpec> = {
     phases: ['Giù', 'Su', 'Tieni', 'Giù'],
   },
   p4: {
+    // Di fronte, schiena al muro: le braccia a W salgono a Y e tornano giù.
     frames: [
-      { root: [0.38, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, STAND], arms: [{ a: 95, b: 270, c: 270 }, { a: 95, b: 270, c: 270 }] },
-      { root: [0.38, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, STAND], arms: [{ a: 272, b: 270, c: 270 }, { a: 272, b: 270, c: 270 }] },
+      { root: [0.5, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [{ a: 87, b: 87, c: 0 }, { a: 93, b: 93, c: 180 }], arms: [{ a: 35, b: 300, c: 300 }, { a: 145, b: 240, c: 240 }] },
+      { root: [0.5, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [{ a: 87, b: 87, c: 0 }, { a: 93, b: 93, c: 180 }], arms: [{ a: 300, b: 300, c: 300 }, { a: 240, b: 240, c: 240 }] },
     ],
-    hold: [0.4, 0.5],
+    hold: [0.6, 0.8],
     move: 1.6,
-    phases: ['Giù', 'Sali', 'Tieni', 'Scendi'],
-    decor: [{ kind: 'line', a: [0.335, -0.2], b: [0.335, G], tone: 'prop' }],
+    view: 'Vista di fronte',
+    phases: ['W', 'Sali', 'Y', 'Scendi'],
   },
   p5: {
     frames: [
-      { root: [0.55, 0.8], anchor: 'hip', torso: 180, neck: 180, legs: [{ a: 300, b: 70, c: 0 }, { a: 300, b: 70, c: 0 }], arms: [{ a: 235, b: 20, c: 0 }, { a: 235, b: 20, c: 0 }] },
-      { root: [0.55, 0.8], anchor: 'hip', torso: 180, bend: -22, neck: 168, legs: [{ a: 300, b: 70, c: 0 }, { a: 300, b: 70, c: 0 }], arms: [{ a: 235, b: 20, c: 0 }, { a: 235, b: 20, c: 0 }] },
+      { root: [0.62, 0.77], anchor: 'hip', torso: 180, neck: 180, legs: [{ a: 300, b: 70, c: 0 }, { a: 300, b: 70, c: 0 }], arms: [{ a: 235, b: 20, c: 0 }, { a: 235, b: 20, c: 0 }] },
+      { root: [0.62, 0.77], anchor: 'hip', torso: 180, bend: -24, neck: 165, legs: [{ a: 300, b: 70, c: 0 }, { a: 300, b: 70, c: 0 }], arms: [{ a: 235, b: 20, c: 0 }, { a: 235, b: 20, c: 0 }] },
     ],
     hold: [0.8, 1.6],
     move: 1.6,
-    phases: ['Piatto', 'Apri', 'Respira', 'Torna'],
+    decor: [{ kind: 'roll', at: [0.46, 0.83], r: 0.04 }],
+    phases: ['Piatto', 'Lasciati andare', 'Respira', 'Torna'],
   },
   p6: {
     frames: [
-      { root: [0.36, 0.62], anchor: 'hip', torso: 352, neck: 355, legs: [{ a: 90, b: 180, c: 180 }, { a: 90, b: 180, c: 180 }], arms: [{ target: [0.66, G], bend: -1, c: 0 }, { target: [0.66, G], bend: -1, c: 0 }] },
-      { root: [0.36, 0.62], anchor: 'hip', torso: 352, neck: 355, legs: [{ a: 90, b: 180, c: 180 }, { a: 184, b: 184, c: 184 }], arms: [{ a: 352, b: 352, c: 352 }, { target: [0.66, G], bend: -1, c: 0 }] },
+      { root: [0.45, 0.6], anchor: 'hip', torso: 352, neck: 355, legs: [{ a: 90, b: 180, c: 180 }, { a: 90, b: 180, c: 180 }], arms: [{ a: 90, b: 90, c: 90 }, { a: 90, b: 90, c: 90 }] },
+      { root: [0.45, 0.6], anchor: 'hip', torso: 352, neck: 355, legs: [{ a: 90, b: 180, c: 180 }, { a: 184, b: 184, c: 184 }], arms: [{ a: 352, b: 352, c: 352 }, { a: 90, b: 90, c: 90 }] },
     ],
-    hold: [0.4, 1.2],
-    move: 1.2,
+    hold: [0.5, 1.2],
+    move: 1.3,
     phases: ['Quattro zampe', 'Allunga', 'Tieni', 'Torna'],
   },
   p8: {
+    // Di fronte: le braccia si alzano ai lati, fino all'altezza delle spalle.
     frames: [
-      { root: [0.46, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, STAND], arms: [{ a: 92, b: 90, c: 90 }, { a: 88, b: 90, c: 90 }] },
-      { root: [0.46, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, STAND], arms: [{ a: 355, b: 355, c: 355 }, { a: 358, b: 358, c: 358 }] },
+      { root: [0.5, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [{ a: 87, b: 87, c: 0 }, { a: 93, b: 93, c: 180 }], arms: [{ a: 85, b: 85, c: 85 }, { a: 95, b: 95, c: 95 }] },
+      { root: [0.5, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [{ a: 87, b: 87, c: 0 }, { a: 93, b: 93, c: 180 }], arms: [{ a: 356, b: 356, c: 356 }, { a: 184, b: 184, c: 184 }] },
     ],
-    hold: [0.4, 0.6],
+    hold: [0.4, 0.7],
     move: 1.4,
+    decor: [{ kind: 'bags' }],
+    view: 'Vista di fronte',
     phases: ['Giù', 'Alza', 'Tieni', 'Scendi'],
   },
   e13: {
@@ -265,9 +276,10 @@ export const FIGURES: Record<string, FigureSpec> = {
     trace: 'shoulder',
   },
   f6: {
+    // Di lato: i piedi restano fermi (il busto scende dritto), il ginocchio dietro sfiora terra.
     frames: [
-      { root: [0.62, 0.845], anchor: 'ankle', torso: 270, neck: 270, legs: [{ a: 50, b: 95, c: 0 }, { target: [0.25, 0.83], bend: -1, c: 20 }], arms: [HANG, HANG] },
-      { root: [0.62, 0.845], anchor: 'ankle', torso: 272, neck: 272, legs: [{ a: 0, b: 98, c: 0 }, { target: [0.25, 0.83], bend: -1, c: 20 }], arms: [HANG, HANG] },
+      { root: [0.45, 0.45], anchor: 'hip', torso: 270, neck: 270, legs: [{ target: [0.686, 0.84], bend: -1, c: 0 }, { target: [0.17, 0.8], bend: -1, c: 100 }], arms: [HANG, HANG] },
+      { root: [0.45, 0.57], anchor: 'hip', torso: 270, neck: 270, legs: [{ target: [0.686, 0.84], bend: -1, c: 0 }, { target: [0.17, 0.8], bend: -1, c: 100 }], arms: [HANG, HANG] },
     ],
     hold: [0.4, 0.3],
     move: 1.1,

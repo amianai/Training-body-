@@ -68,6 +68,8 @@ function decor(spec: FigureSpec, s: Skeleton, k: number, front: boolean, thick: 
     } else if (d.kind === 'cushion' && front) {
       const p = s.legs[0].mid
       out += `<ellipse class="fig-prop-fill" cx="${f(p[0])}" cy="${f(p[1] + 0.01)}" rx="${f(0.05 * (1 - 0.3 * k))}" ry="0.035"/>`
+    } else if (d.kind === 'roll' && !front) {
+      out += `<circle class="fig-prop-fill" cx="${f(d.at[0])}" cy="${f(d.at[1])}" r="${f(d.r)}"/>`
     } else if (d.kind === 'stick' && !front) {
       // manico di scopa lungo la schiena: dal bacino alla nuca
       const dir = [s.head[0] - s.hip[0], s.head[1] - s.hip[1]]
@@ -111,13 +113,20 @@ export function renderPicto(spec: FigureSpec, time: number, box: Box): string {
 
 /* ---------- Schema da allenatore ---------- */
 
-function stick(s: Skeleton, cls: string): string {
+function stick(s: Skeleton, cls: string, withFar = false): string {
   const seg = (a: Pt, b: Pt) => `<line x1="${f(a[0])}" y1="${f(a[1])}" x2="${f(b[0])}" y2="${f(b[1])}"/>`
-  let out = `<g class="${cls}">`
-  for (const c of [s.legs[0], s.arms[0]]) {
-    out += seg(c.base, c.mid) + seg(c.mid, c.end)
-    if (c.tip) out += seg(c.end, c.tip)
+  const limbs = (chains: Chain[]) => {
+    let o = ''
+    for (const c of chains) {
+      o += seg(c.base, c.mid) + seg(c.mid, c.end)
+      if (c.tip) o += seg(c.end, c.tip)
+    }
+    return o
   }
+  let out = `<g class="${cls}">`
+  // gamba e braccio lontani, più chiari: senza, in un affondo si vedrebbe una gamba sola
+  if (withFar) out += `<g class="fig-far-limb">${limbs([s.legs[1], s.arms[1]])}</g>`
+  out += limbs([s.legs[0], s.arms[0]])
   out += seg(s.hip, s.spine) + seg(s.spine, s.shoulder) + seg(s.shoulder, s.neck)
   out += `<circle cx="${f(s.head[0])}" cy="${f(s.head[1])}" r="${LEN.head}"/></g>`
   return out
@@ -172,11 +181,12 @@ export function renderCoach(spec: FigureSpec, time: number, box: Box): string {
   for (const [dt, cls] of [[0.45, 'fig-ghost fig-ghost-1'], [0.3, 'fig-ghost fig-ghost-2'], [0.15, 'fig-ghost fig-ghost-3']] as const) {
     out += stick(solve(poseAt(spec, time - dt)), cls)
   }
-  out += stick(s, 'fig-line')
+  out += stick(s, 'fig-line', true)
   out += decor(spec, s, k, true, box.h * 0.025)
   const joints = [s.legs[0].end, s.legs[0].mid, s.hip, s.shoulder, s.arms[0].mid, s.arms[0].end]
   for (const p of joints) out += `<circle class="fig-joint" cx="${f(p[0])}" cy="${f(p[1])}" r="${f(box.h * 0.018)}"/>`
   if (spec.key) out += keyAngle(s, spec.key, box)
   out += `<text class="fig-phase" x="${f(box.x + box.w * 0.04)}" y="${f(box.y + box.h * 0.14)}" font-size="${f(box.h * 0.12)}">${spec.phases[phase]}</text>`
+  if (spec.view) out += `<text class="fig-num" x="${f(box.x + box.w * 0.04)}" y="${f(box.y + box.h * 0.95)}" font-size="${f(box.h * 0.06)}">${spec.view}</text>`
   return out
 }

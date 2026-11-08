@@ -153,6 +153,9 @@
   stroke: var(--foreground);
   stroke-width: 3px;
 }
+.fig-far-limb {
+  opacity: 0.5;
+}
 .fig-ghost :is(line, circle) {
   stroke: var(--primary);
   stroke-width: 2px;
