@@ -37,6 +37,10 @@ Questa è la **v0**: un prototipo da usare per una settimana. Quello che non fun
 
 La logica è in `src/lib/streak.ts`, con i test in `src/lib/streak.test.ts`.
 
+### Postura
+
+Una categoria di esercizi per schiena, spalle e collo (mento indietro, Y da prono, scivolo al muro, estensione toracica, bird-dog, alzate laterali). Ogni allenamento ha il suo blocco di postura; la sessione D "Postura e recupero" è la giornata leggera. La scheda è di 3 allenamenti a settimana, 4 nelle ultime due settimane.
+
 ### Voce guida
 
 All'inizio di ogni esercizio una voce dice cosa fare; il tasto altoparlante in basso a sinistra la spegne.

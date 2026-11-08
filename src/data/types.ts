@@ -1,4 +1,4 @@
-export type Category = 'stretching' | 'mobilita' | 'enduro' | 'flex'
+export type Category = 'stretching' | 'mobilita' | 'enduro' | 'flex' | 'postura'
 
 export interface Exercise {
   id: string

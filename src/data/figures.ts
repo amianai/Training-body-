@@ -175,6 +175,61 @@ export const FIGURES: Record<string, FigureSpec> = {
     move: 1.4,
     phases: ['Tieni', 'Tieni', 'Tieni', 'Tieni'],
   },
+  p1: {
+    frames: [
+      { root: [0.55, 0.8], anchor: 'hip', torso: 180, neck: 190, legs: [{ a: 300, b: 70, c: 0 }, { a: 300, b: 70, c: 0 }], arms: [{ a: 5, b: 0, c: 0 }, { a: 5, b: 0, c: 0 }] },
+      { root: [0.55, 0.8], anchor: 'hip', torso: 180, neck: 177, legs: [{ a: 300, b: 70, c: 0 }, { a: 300, b: 70, c: 0 }], arms: [{ a: 5, b: 0, c: 0 }, { a: 5, b: 0, c: 0 }] },
+    ],
+    hold: [0.6, 1.4],
+    move: 1.2,
+    phases: ['Rilassa', 'Mento in dentro', 'Tieni', 'Rilassa'],
+  },
+  p3: {
+    frames: [
+      { root: [0.45, 0.82], anchor: 'hip', torso: 0, neck: 0, legs: [{ a: 180, b: 180, c: 180 }, { a: 180, b: 180, c: 180 }], arms: [{ a: 10, b: 5, c: 5 }, { a: 10, b: 5, c: 5 }] },
+      { root: [0.45, 0.82], anchor: 'hip', torso: 0, neck: 355, legs: [{ a: 180, b: 180, c: 180 }, { a: 180, b: 180, c: 180 }], arms: [{ a: 335, b: 328, c: 328 }, { a: 335, b: 328, c: 328 }] },
+    ],
+    hold: [0.4, 1],
+    move: 1,
+    phases: ['Giù', 'Su', 'Tieni', 'Giù'],
+  },
+  p4: {
+    frames: [
+      { root: [0.38, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, STAND], arms: [{ a: 95, b: 270, c: 270 }, { a: 95, b: 270, c: 270 }] },
+      { root: [0.38, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, STAND], arms: [{ a: 272, b: 270, c: 270 }, { a: 272, b: 270, c: 270 }] },
+    ],
+    hold: [0.4, 0.5],
+    move: 1.6,
+    phases: ['Giù', 'Sali', 'Tieni', 'Scendi'],
+    decor: [{ kind: 'line', a: [0.335, -0.2], b: [0.335, G], tone: 'prop' }],
+  },
+  p5: {
+    frames: [
+      { root: [0.55, 0.8], anchor: 'hip', torso: 180, neck: 180, legs: [{ a: 300, b: 70, c: 0 }, { a: 300, b: 70, c: 0 }], arms: [{ a: 235, b: 20, c: 0 }, { a: 235, b: 20, c: 0 }] },
+      { root: [0.55, 0.8], anchor: 'hip', torso: 180, bend: -22, neck: 168, legs: [{ a: 300, b: 70, c: 0 }, { a: 300, b: 70, c: 0 }], arms: [{ a: 235, b: 20, c: 0 }, { a: 235, b: 20, c: 0 }] },
+    ],
+    hold: [0.8, 1.6],
+    move: 1.6,
+    phases: ['Piatto', 'Apri', 'Respira', 'Torna'],
+  },
+  p6: {
+    frames: [
+      { root: [0.36, 0.62], anchor: 'hip', torso: 352, neck: 355, legs: [{ a: 90, b: 180, c: 180 }, { a: 90, b: 180, c: 180 }], arms: [{ target: [0.66, G], bend: -1, c: 0 }, { target: [0.66, G], bend: -1, c: 0 }] },
+      { root: [0.36, 0.62], anchor: 'hip', torso: 352, neck: 355, legs: [{ a: 90, b: 180, c: 180 }, { a: 184, b: 184, c: 184 }], arms: [{ a: 352, b: 352, c: 352 }, { target: [0.66, G], bend: -1, c: 0 }] },
+    ],
+    hold: [0.4, 1.2],
+    move: 1.2,
+    phases: ['Quattro zampe', 'Allunga', 'Tieni', 'Torna'],
+  },
+  p8: {
+    frames: [
+      { root: [0.46, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, STAND], arms: [{ a: 92, b: 90, c: 90 }, { a: 88, b: 90, c: 90 }] },
+      { root: [0.46, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [STAND, STAND], arms: [{ a: 355, b: 355, c: 355 }, { a: 358, b: 358, c: 358 }] },
+    ],
+    hold: [0.4, 0.6],
+    move: 1.4,
+    phases: ['Giù', 'Alza', 'Tieni', 'Scendi'],
+  },
   e13: {
     frames: [
       { root: [0.62, G - 0.02], anchor: 'ankle', torso: 270, neck: 272, legs: [{ a: 0, b: 90, c: 0 }, { a: 0, b: 90, c: 0 }], arms: [{ a: 8, b: 2, c: 0 }, { a: 8, b: 2, c: 0 }] },

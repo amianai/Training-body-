@@ -32,6 +32,7 @@
   --cat-mobilita: #a78bfa;
   --cat-enduro: #ff7a1a;
   --cat-flex: #fb7185;
+  --cat-postura: #2dd4bf;
 
   --freeze: #7dd3fc;
 
@@ -70,6 +71,7 @@
   --color-cat-mobilita: var(--cat-mobilita);
   --color-cat-enduro: var(--cat-enduro);
   --color-cat-flex: var(--cat-flex);
+  --color-cat-postura: var(--cat-postura);
   --color-freeze: var(--freeze);
 }
 

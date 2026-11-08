@@ -115,6 +115,36 @@
   "calm": true
  },
  {
+  "id": "come-p1",
+  "text": "Sdraiato, ginocchia piegate, un asciugamano sottile sotto la testa. Fai un piccolo sì con la testa, senza staccarla da terra. Tieni a metà forza: il collo si allunga.",
+  "calm": true
+ },
+ {
+  "id": "come-p3",
+  "text": "A pancia in giù, braccia avanti a Y, pollici in su. Porta le scapole in basso e alza le braccia, tieni 2 secondi. Scendi piano, senza inarcare collo e schiena.",
+  "calm": true
+ },
+ {
+  "id": "come-p4",
+  "text": "Schiena, sedere e nuca al muro, piedi un passo avanti. Braccia a W, con gomiti e dorso delle mani sul muro. Sali a Y senza staccare la schiena, poi scendi piano.",
+  "calm": true
+ },
+ {
+  "id": "come-p5",
+  "text": "Sdraiato, un asciugamano arrotolato sotto la schiena alta. Mani dietro la testa a sostenere il collo. Lasciati andare indietro e respira lento, senza inarcare i lombari.",
+  "calm": true
+ },
+ {
+  "id": "come-p6",
+  "text": "A quattro zampe, mani sotto le spalle e ginocchia sotto le anche. Allunga un braccio e la gamba opposta, in linea con la schiena, e tieni 3 secondi. Bacino fermo, collo lungo.",
+  "calm": true
+ },
+ {
+  "id": "come-p8",
+  "text": "In piedi, una bottiglia d’acqua per mano, braccia lungo i fianchi. Alza le braccia ai lati fino alle spalle in 2 secondi, gomiti morbidi. Scendi in 3 secondi, spalle lontane dalle orecchie.",
+  "calm": true
+ },
+ {
   "id": "come-s1",
   "text": "Braccio teso davanti, palmo in su. Con l'altra mano tira indietro le dita. Tensione 5-6 su 10, mai dolore.",
   "calm": true
@@ -192,11 +222,6 @@
  {
   "id": "giro-6",
   "text": "Giro 6.",
-  "calm": false
- },
- {
-  "id": "giro-7",
-  "text": "Giro 7.",
   "calm": false
  },
  {
@@ -300,6 +325,36 @@
   "calm": true
  },
  {
+  "id": "nome-p1",
+  "text": "Mento indietro da sdraiato.",
+  "calm": true
+ },
+ {
+  "id": "nome-p3",
+  "text": "Y da prono.",
+  "calm": true
+ },
+ {
+  "id": "nome-p4",
+  "text": "Scivolo al muro.",
+  "calm": true
+ },
+ {
+  "id": "nome-p5",
+  "text": "Estensione toracica su asciugamano.",
+  "calm": true
+ },
+ {
+  "id": "nome-p6",
+  "text": "Bird-dog.",
+  "calm": true
+ },
+ {
+  "id": "nome-p8",
+  "text": "Alzate laterali con bottiglie.",
+  "calm": true
+ },
+ {
   "id": "nome-s1",
   "text": "Stretching flessori avambraccio.",
   "calm": true
@@ -328,6 +383,11 @@
   "id": "nome-s8",
   "text": "Polpacci al muro.",
   "calm": true
+ },
+ {
+  "id": "rip-3",
+  "text": "3 ripetizioni.",
+  "calm": false
  },
  {
   "id": "rip-3-lato",
@@ -410,11 +470,6 @@
   "calm": false
  },
  {
-  "id": "sec-20",
-  "text": "20 secondi.",
-  "calm": false
- },
- {
   "id": "sec-25",
   "text": "25 secondi.",
   "calm": false
@@ -437,16 +492,6 @@
  {
   "id": "sec-45",
   "text": "45 secondi.",
-  "calm": false
- },
- {
-  "id": "sec-50",
-  "text": "50 secondi.",
-  "calm": false
- },
- {
-  "id": "sec-55",
-  "text": "55 secondi.",
   "calm": false
  },
  {

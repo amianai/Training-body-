@@ -5,6 +5,7 @@ export const CATEGORIES: Record<Category, { label: string; color: string }> = {
   mobilita: { label: 'Mobilità', color: 'var(--cat-mobilita)' },
   enduro: { label: 'Enduro', color: 'var(--cat-enduro)' },
   flex: { label: 'Flex', color: 'var(--cat-flex)' },
+  postura: { label: 'Postura', color: 'var(--cat-postura)' },
 }
 
 /**
@@ -201,6 +202,67 @@ export const EXERCISES: Exercise[] = [
     cues: ['Schiena appoggiata al muro, piedi avanti', 'Scendi finché le cosce sono parallele a terra', 'Ginocchia sopra le caviglie, e tieni'],
     why: 'Le cosce che ti tengono in piedi sulle pedane per tutto il giro.',
     equipment: 'Un muro',
+  },
+
+  // Postura
+  {
+    id: 'p1',
+    name: 'Mento indietro da sdraiato',
+    nameEn: 'Supine chin tuck',
+    category: 'postura',
+    kind: 'time',
+    cues: ['Sdraiato, ginocchia piegate, un asciugamano sottile sotto la testa', 'Fai un piccolo sì con la testa, senza staccarla da terra', 'Tieni a metà forza: il collo si allunga'],
+    why: 'Risveglia i muscoli profondi davanti al collo, quelli che reggono la testa quando guardi in basso.',
+    equipment: 'Un asciugamano sottile',
+  },
+  {
+    id: 'p3',
+    name: 'Y da prono',
+    nameEn: 'Prone Y raise',
+    category: 'postura',
+    kind: 'reps',
+    cues: ['A pancia in giù, braccia avanti a Y, pollici in su', 'Porta le scapole in basso e alza le braccia, tieni 2 secondi', 'Scendi piano, senza inarcare collo e schiena'],
+    why: 'Rinforza il trapezio basso e medio, che tiene le scapole in basso e il petto aperto.',
+  },
+  {
+    id: 'p4',
+    name: 'Scivolo al muro',
+    nameEn: 'Wall angel',
+    category: 'postura',
+    kind: 'reps',
+    cues: ['Schiena, sedere e nuca al muro, piedi un passo avanti', 'Braccia a W, con gomiti e dorso delle mani sul muro', 'Sali a Y senza staccare la schiena, poi scendi piano'],
+    why: 'Apre le spalle e lavora il dentato e il trapezio basso, per alzare le braccia senza inarcare.',
+    equipment: 'Un muro',
+  },
+  {
+    id: 'p5',
+    name: 'Estensione toracica su asciugamano',
+    nameEn: 'Thoracic extension over a towel roll',
+    category: 'postura',
+    kind: 'time',
+    cues: ['Sdraiato, un asciugamano arrotolato sotto la schiena alta', 'Mani dietro la testa a sostenere il collo', 'Lasciati andare indietro e respira lento, senza inarcare i lombari'],
+    why: 'Dopo ore seduto la schiena alta si arrotonda: qui impara di nuovo ad aprirsi.',
+    equipment: 'Un asciugamano arrotolato',
+  },
+  {
+    id: 'p6',
+    name: 'Bird-dog',
+    nameEn: 'Bird dog',
+    category: 'postura',
+    kind: 'reps',
+    perSide: true,
+    cues: ['A quattro zampe, mani sotto le spalle e ginocchia sotto le anche', 'Allunga un braccio e la gamba opposta, in linea con la schiena, e tieni 3 secondi', 'Bacino fermo, collo lungo'],
+    why: 'Rinforza schiena e glutei tenendo il busto fermo: serve a reggere la posizione da seduto e in piedi.',
+  },
+  {
+    id: 'p8',
+    name: 'Alzate laterali con bottiglie',
+    nameEn: 'Lateral raise',
+    category: 'postura',
+    kind: 'reps',
+    cues: ['In piedi, una bottiglia d’acqua per mano, braccia lungo i fianchi', 'Alza le braccia ai lati fino alle spalle in 2 secondi, gomiti morbidi', 'Scendi in 3 secondi, spalle lontane dalle orecchie'],
+    why: 'Rinforza spalle e trapezio: allenare proprio i muscoli che fanno male ha ridotto il dolore negli impiegati.',
+    equipment: 'Due bottiglie d’acqua',
   },
 
   // Flex

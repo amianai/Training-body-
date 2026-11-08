@@ -11,7 +11,7 @@ import { buildSteps, type Side, type Step, type WorkStep } from './session'
  * voce vera e rimontare per qualsiasi esercizio, giro e livello della scheda.
  */
 
-const CALM: ReadonlySet<Category> = new Set(['stretching', 'mobilita'])
+const CALM: ReadonlySet<Category> = new Set(['stretching', 'mobilita', 'postura'])
 
 const CLOSERS = {
   calm: ['Respira piano.', 'Rilassati e respira.', 'Senza fretta.'],
