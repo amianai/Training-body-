@@ -69,6 +69,11 @@ export interface Plan {
   isExample: boolean
   sessions: Session[]
   phases: Phase[]
+  /**
+   * La scheda è cambiata con l'app già in uso: le settimane che iniziano prima di `before` si
+   * giudicano con al massimo `sessionsPerWeek` allenamenti, quelli che valevano allora.
+   */
+  grandfather?: { before: string; sessionsPerWeek: number }
 }
 
 export type EntryType = 'workout' | 'mini' | 'ride' | 'test' | 'freeze' | 'skip'

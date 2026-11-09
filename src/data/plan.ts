@@ -243,6 +243,8 @@ function atLevel(base: Session, level: number): Session {
 export const PLAN: Plan = {
   name: 'La mia scheda',
   isExample: false,
+  // Fino al 8 novembre 2026 le prime due settimane erano da 2 allenamenti: chi li aveva fatti non perde la streak.
+  grandfather: { before: '2026-11-09', sessionsPerWeek: 2 },
   phases: [
     { label: 'Adattamento', weeks: 2, sessionsPerWeek: 3, rotation: ['a1', 'b1', 'd1'] },
     { label: 'Base', weeks: 2, sessionsPerWeek: 3, rotation: ['a2', 'b2', 'c2'] },

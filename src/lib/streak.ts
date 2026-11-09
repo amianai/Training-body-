@@ -80,7 +80,8 @@ export function weekTarget(
   firstDay: string = planStart,
 ): number {
   const weekIndex = diffDays(mondayOf(planStart), weekStart) / 7
-  const base = phaseForWeek(plan, Math.max(0, weekIndex)).phase.sessionsPerWeek
+  let base = phaseForWeek(plan, Math.max(0, weekIndex)).phase.sessionsPerWeek
+  if (plan.grandfather && weekStart < plan.grandfather.before) base = Math.min(base, plan.grandfather.sessionsPerWeek)
   if (weekStart === mondayOf(firstDay)) {
     const available = 7 - weekdayIndex(firstDay)
     return Math.ceil((base * available) / 7)

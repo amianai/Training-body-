@@ -43,3 +43,15 @@ describe('fiamma', () => {
     expect(stage(entries, 12)).toBe(2)
   })
 })
+
+describe('scheda cambiata a metà', () => {
+  it('chi ha fatto 2 allenamenti nella prima settimana (obiettivo di allora) non perde la streak', () => {
+    const mine: Entry[] = [
+      { id: 'a', type: 'workout', date: '2026-11-02', createdAt: 1 },
+      { id: 'b', type: 'workout', date: '2026-11-07', createdAt: 2 },
+    ]
+    const stats = computeStats(mine, PLAN, '2026-11-02', '2026-11-09')
+    expect(stats.streak).toBe(2)
+    expect(stats.week.target).toBe(3)
+  })
+})
