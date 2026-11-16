@@ -7,21 +7,18 @@ import { spokenIntro } from '@/lib/voiceScript'
 import { useAppStore } from '@/store/useAppStore'
 
 /** Come suona la guida alla prima serie di flessioni. */
-const SAMPLE = spokenIntro(
-  { kind: 'work', exercise: getExercise('f1'), reps: 8, blockTitle: 'Circuito', round: 1, rounds: 2 },
-  undefined,
-  true,
-  0,
-)
+const sample = (cheers: boolean) =>
+  spokenIntro({ kind: 'work', exercise: getExercise('f1'), reps: 8, blockTitle: 'Circuito', round: 1, rounds: 2 }, undefined, true, 0, cheers)
 
 /** Quale voce usa la guida, prova della voce e cosa fare se il telefono non ne ha una italiana. */
 export function VoiceSettings() {
   const voiceName = useAppStore((s) => s.settings.voiceName)
+  const cheers = useAppStore((s) => s.settings.voiceCheers)
   const setSetting = useAppStore((s) => s.setSetting)
   const status = useVoiceStatus(voiceName)
 
   const tryButton = (
-    <Button variant="outline" size="lg" onClick={() => say(SAMPLE, voiceName)}>
+    <Button variant="outline" size="lg" onClick={() => say(sample(cheers), voiceName)}>
       <Volume2 /> Prova la voce
     </Button>
   )

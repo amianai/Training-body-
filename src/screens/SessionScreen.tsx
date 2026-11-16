@@ -437,11 +437,13 @@ function DoneView({ entry, exerciseCount }: { entry: Entry; exerciseCount: numbe
   const tests = current.type === 'test' ? testHistory(entries) : []
   const [noteOpen, setNoteOpen] = useState(false)
   const voiceOn = useAppStore((s) => s.settings.voice)
+  const cheers = useAppStore((s) => s.settings.voiceCheers)
   const voiceName = useAppStore((s) => s.settings.voiceName)
 
   useEffect(() => {
-    if (voiceOn) say(DONE, voiceName)
-  }, [voiceOn, voiceName])
+    // "Fatto! Ottimo lavoro" è un incoraggiamento: senza, a fine allenamento la voce tace
+    if (voiceOn && cheers) say(DONE, voiceName)
+  }, [voiceOn, cheers, voiceName])
 
   useEffect(() => {
     const colors = ['#c5f82a', '#ff7a1a', '#ffffff']
@@ -556,7 +558,7 @@ export function SessionScreen() {
   const steps = useMemo(() => (session ? buildSteps(session, { mini }) : []), [session, mini])
   const index = Math.min(active?.stepIndex ?? 0, steps.length - 1)
   // Stesso oggetto finché non cambia passo: la voce parte una volta sola per esercizio.
-  const intro = useMemo(() => introAt(steps, index), [steps, index])
+  const intro = useMemo(() => introAt(steps, index, settings.voiceCheers), [steps, index, settings.voiceCheers])
 
   const running = active !== null && doneEntry === null
   useWakeLock(running)

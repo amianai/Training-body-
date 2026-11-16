@@ -40,6 +40,12 @@ STYLE = {
     True: ('Personal trainer italiano durante lo stretching. Voce naturale e calda, tono calmo e rilassato, '
            'ritmo lento, pause morbide. Italiano standard, senza accento regionale.'),
 }
+# Stile "solo tecnica": istruttore neutro, senza enfasi. Vale per tutte le frasi, anche lo stretching.
+NEUTRO = ('Istruttore tecnico italiano che dà indicazioni di esercizio. Voce maschile adulta, neutra e professionale: '
+          'tono piano e informativo, senza entusiasmo, senza enfasi e senza incoraggiamenti. Ritmo regolare e chiaro, '
+          'frasi staccate. Italiano standard, senza accento regionale.')
+PROVA_TESTO_NEUTRO = 'Flessioni. 8 ripetizioni. Mani sotto le spalle, corpo dritto. Petto quasi a terra, poi spingi.'
+
 # Tra una frase e l'altra del gruppo: una pausa molto più lunga di quelle dentro una frase.
 SEPARATOR = ' <long pause> <long pause> '
 
@@ -54,7 +60,7 @@ class QuotaFinita(Exception):
     pass
 
 
-def synthesize(text: str, voice: str, calm: bool, model: str) -> bytes:
+def synthesize(text: str, voice: str, calm: bool, model: str, style: str | None = None) -> bytes:
     """Testo → WAV (24 kHz, mono, 16 bit). Aspetta se Gemini chiede di rallentare un attimo."""
     key = os.environ.get('GEMINI_API_KEY')
     if not key:
@@ -62,7 +68,7 @@ def synthesize(text: str, voice: str, calm: bool, model: str) -> bytes:
     body = json.dumps({
         'model': model,
         'input': [{'type': 'text', 'text': text,
-                   'annotations': [{'type': 'speech_metadata', 'style': STYLE[calm]}]}],
+                   'annotations': [{'type': 'speech_metadata', 'style': style or STYLE[calm]}]}],
         'response_format': {'type': 'audio'},
         'generation_config': {'speech_config': [{'voice': voice}]},
     }).encode()
@@ -242,15 +248,15 @@ def record(voice: str, model: str, group: int, pause: float, max_requests: int |
     print('Fatto.')
 
 
-def audition(voices: list[str], model: str, pause: float):
+def audition(voices: list[str], model: str, pause: float, neutral: bool = False):
     PROVA.mkdir(parents=True, exist_ok=True)
     for i, voice in enumerate(voices, 1):
-        out = PROVA / f'{voice}.mp3'
+        out = PROVA / (f'{voice}-neutro.mp3' if neutral else f'{voice}.mp3')
         if out.exists():
             continue
         print(f'[{i}/{len(voices)}] {voice}', flush=True)
         try:
-            to_mp3(synthesize(PROVA_TESTO, voice, False, model), out)
+            to_mp3(synthesize(PROVA_TESTO_NEUTRO if neutral else PROVA_TESTO, voice, False, model, NEUTRO if neutral else None), out)
         except QuotaFinita as e:
             sys.exit(f'Quota gratuita finita: riprendi più tardi con lo stesso comando.\n{e}')
         time.sleep(pause)
@@ -266,9 +272,10 @@ if __name__ == '__main__':
     p.add_argument('--gruppo', type=int, default=15, help='frasi lette in una sola richiesta')
     p.add_argument('--pausa', type=float, default=6, help='secondi tra una richiesta e l’altra')
     p.add_argument('--richieste', type=int, help='al massimo queste richieste (per provare)')
+    p.add_argument('--neutro', action='store_true', help='campioni con lo stile neutro, solo tecnica')
     a = p.parse_args()
     if a.prova is not None:
-        audition(a.prova or PROVA_VOCI, a.modello, a.pausa)
+        audition(a.prova or PROVA_VOCI, a.modello, a.pausa, a.neutro)
     elif a.voce:
         record(a.voce, a.modello, a.gruppo, a.pausa, a.richieste)
     else:

@@ -71,6 +71,13 @@ export function SettingsScreen() {
           description="All'inizio di ogni esercizio legge come si fa. Si spegne anche dall'altoparlante durante l'allenamento."
           control={<Switch checked={settings.voice} onCheckedChange={(v) => setSetting('voice', v)} />}
         />
+        {settings.voice && (
+          <Row
+            title="Incoraggiamenti"
+            description="«Vai!», «Senza fretta» e simili a fine frase. Spento: solo nome, numeri e tecnica."
+            control={<Switch checked={settings.voiceCheers} onCheckedChange={(v) => setSetting('voiceCheers', v)} />}
+          />
+        )}
         {settings.voice && <VoiceSettings />}
         <Row
           title="Vibrazione a fine timer"

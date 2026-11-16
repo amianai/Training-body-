@@ -25,6 +25,14 @@ describe('spokenIntro', () => {
     expect(spokenIntro(lati[1], lati[0], false, 1).text).toBe('Cambia lato: ora il destro. 30 secondi. Rilassati e respira.')
   })
 
+  it('senza incoraggiamenti dice solo nome, numeri e tecnica', () => {
+    const flessioni = work.filter((s) => s.exercise.id === 'f1')
+    expect(spokenIntro(flessioni[0], undefined, true, 0, false).text).toBe('Flessioni. 8 ripetizioni. Mani sotto le spalle, corpo dritto. Petto quasi a terra, poi spingi.')
+    expect(spokenIntro(flessioni[1], undefined, false, 0, false).text).toBe('Flessioni. Giro 2. 8 ripetizioni.')
+    const lati = work.filter((s) => s.exercise.id === 's1')
+    expect(spokenIntro(lati[1], lati[0], false, 1, false).text).toBe('Cambia lato: ora il destro. 30 secondi.')
+  })
+
   it('legge i gradi in parole', () => {
     const deadBug = buildSteps(getSession('b1')!).find((s): s is WorkStep => s.kind === 'work' && s.exercise.id === 'f9')!
     expect(spokenIntro(deadBug, undefined, true, 0).text).toContain('ginocchia a 90 gradi.')

@@ -71,35 +71,36 @@ function spoken(clips: Clip[], calm: boolean): Spoken {
  * @param previous l'ultimo esercizio prima di questo (per sapere se è solo un cambio di lato)
  * @param firstTime prima volta che l'esercizio compare nella sessione: solo allora si spiega
  * @param n numero progressivo, per variare la frase finale
+ * @param cheers con la frase finale di incoraggiamento ("Vai!", "Senza fretta"…); senza, solo nome, numeri e tecnica
  */
-export function spokenIntro(step: WorkStep, previous: WorkStep | undefined, firstTime: boolean, n: number): Spoken {
+export function spokenIntro(step: WorkStep, previous: WorkStep | undefined, firstTime: boolean, n: number, cheers = true): Spoken {
   const { exercise } = step
   const calm = isCalm(exercise)
-  const closer = closerClip(calm, n)
+  const closer = cheers ? [closerClip(calm, n)] : []
 
   // Prova del test: cosa misura, come si fa, e via.
   if (step.max) {
-    return spoken([nameClip(exercise), exercise.kind === 'time' ? TEST_TIME : TEST_REPS, howClip(exercise), closer], calm)
+    return spoken([nameClip(exercise), exercise.kind === 'time' ? TEST_TIME : TEST_REPS, howClip(exercise), ...closer], calm)
   }
 
   // Secondo lato subito dopo il primo: basta dirlo.
   if (step.side === 'destro' && previous?.exercise.id === exercise.id && previous.side === 'sinistro') {
-    return spoken([SWITCH, targetClip(step), closer], calm)
+    return spoken([SWITCH, targetClip(step), ...closer], calm)
   }
 
   const head = [nameClip(exercise)]
   if (!firstTime && step.rounds > 1) head.push(roundClip(step.round))
   if (step.side) head.push(sideClip(step.side))
   const how = firstTime ? [howClip(exercise)] : []
-  return spoken([...head, targetClip(step), ...how, closer], calm)
+  return spoken([...head, targetClip(step), ...how, ...closer], calm)
 }
 
 /** Cosa dire al passo `index` di una sessione (niente durante i recuperi). */
-export function introAt(steps: Step[], index: number): Spoken | null {
+export function introAt(steps: Step[], index: number, cheers = true): Spoken | null {
   const step = steps[index]
   if (step?.kind !== 'work') return null
   const previous = steps.slice(0, index).filter((s): s is WorkStep => s.kind === 'work')
-  return spokenIntro(step, previous.at(-1), !previous.some((s) => s.exercise.id === step.exercise.id), previous.length)
+  return spokenIntro(step, previous.at(-1), !previous.some((s) => s.exercise.id === step.exercise.id), previous.length, cheers)
 }
 
 export const DONE: Spoken = spoken([clip('fatto', 'Fatto! Ottimo lavoro. Ora recupera.')], false)
