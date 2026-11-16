@@ -6,19 +6,52 @@ import type { Spoken } from './voiceScript'
 // Voce guida: prima le frasi registrate con una voce vera (scripts/voice), poi la sintesi vocale del telefono.
 // Col telefono si parla solo con una voce italiana: una voce inglese che legge l'italiano non si capisce.
 
-/** Frasi registrate: id → testo letto. Un audio vale solo se il testo è ancora quello di oggi. */
-const recordedText: Record<string, string> = recorded.clips
-/** Nome della voce registrata, se c'è. */
-export const recordedVoice: string | null = recorded.voice
-export const hasRecordings = Object.keys(recordedText).length > 0
+/**
+ * Una voce registrata: le sue frasi (id → testo letto) stanno in public/voce/<id>/.
+ * Un audio vale solo se il testo è ancora quello di oggi.
+ */
+interface VoicePack {
+  voice: string
+  model: string
+  /** Ha anche le frasi di incoraggiamento; senza, è una voce "solo tecnica". */
+  cheers: boolean
+  /** Tutte le frasi sono registrate: solo allora la voce si può scegliere. */
+  complete: boolean
+  clips: Record<string, string>
+}
 
-export function isRecorded(spoken: Spoken): boolean {
-  return spoken.clips.length > 0 && spoken.clips.every((c) => recordedText[c.id] === c.text)
+const PACKS = Object.entries(recorded.voices as Record<string, VoicePack>).filter(([, pack]) => pack.complete)
+
+export interface VoiceChoice {
+  id: string
+  name: string
+  cheers: boolean
+}
+
+/** Voci registrate tra cui scegliere, la prima è quella di partenza. */
+export const recordedVoices: VoiceChoice[] = PACKS.map(([id, pack]) => ({ id, name: pack.voice, cheers: pack.cheers }))
+export const hasRecordings = recordedVoices.length > 0
+
+/** La voce scelta, o la prima se la scelta non c'è (più). */
+export function recordedVoiceFor(id: string | null | undefined): VoiceChoice | null {
+  return recordedVoices.find((v) => v.id === id) ?? recordedVoices[0] ?? null
+}
+
+function packClips(id: string | null | undefined): [string, Record<string, string>] | null {
+  const choice = recordedVoiceFor(id)
+  const pack = choice && PACKS.find(([packId]) => packId === choice.id)
+  return pack ? [pack[0], pack[1].clips] : null
+}
+
+export function isRecorded(spoken: Spoken, pack?: string | null): boolean {
+  const clips = packClips(pack)?.[1]
+  return clips !== undefined && spoken.clips.length > 0 && spoken.clips.every((c) => clips[c.id] === c.text)
 }
 
 declare global {
   interface Window {
-    __VOCE__?: Record<string, string>
+    /** Nella pagina di prova su claude.ai gli audio stanno dentro la pagina: voce → frase → audio. */
+    __VOCE__?: Record<string, Record<string, string>>
   }
 }
 
@@ -84,12 +117,11 @@ const GAP_MS = 200
 
 let playing: { cancelled: boolean; audio?: HTMLAudioElement; timer?: number } | null = null
 
-function playClips(spoken: Spoken) {
+function playClips(spoken: Spoken, pack: string) {
   const run: NonNullable<typeof playing> = { cancelled: false }
   playing = run
   const audios = spoken.clips.map((c) => {
-    // Nella pagina di prova su claude.ai gli audio sono dentro la pagina (window.__VOCE__).
-    const audio = new Audio(window.__VOCE__?.[c.id] ?? `${import.meta.env.BASE_URL}voce/${c.id}.mp3`)
+    const audio = new Audio(window.__VOCE__?.[pack]?.[c.id] ?? `${import.meta.env.BASE_URL}voce/${pack}/${c.id}.mp3`)
     audio.preload = 'auto'
     return audio
   })
@@ -108,9 +140,10 @@ function playClips(spoken: Spoken) {
 }
 
 /** Dice una frase, interrompendo quella prima: registrata se c'è, altrimenti con la voce italiana del telefono. */
-export function say(spoken: Spoken, preferred?: string | null) {
+export function say(spoken: Spoken, pack?: string | null, preferred?: string | null) {
   stopSpeaking()
-  if (isRecorded(spoken)) playClips(spoken)
+  const recordedPack = packClips(pack)?.[0]
+  if (recordedPack && isRecorded(spoken, pack)) playClips(spoken, recordedPack)
   else speak(spoken.text, spoken.calm, preferred)
 }
 

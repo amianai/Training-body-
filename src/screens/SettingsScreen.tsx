@@ -8,6 +8,7 @@ import { VoiceSettings } from '@/components/VoiceSettings'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { formatLong, todayISO } from '@/lib/dates'
+import { useVoiceOptions } from '@/lib/hooks'
 import { exportBackup, useAppStore } from '@/store/useAppStore'
 
 function Row({ title, description, control }: { title: string; description?: string; control: ReactNode }) {
@@ -32,6 +33,7 @@ export function SettingsScreen() {
   const demo = useAppStore((s) => s.demo)
   const loadDemo = useAppStore((s) => s.loadDemo)
   const clearDemo = useAppStore((s) => s.clearDemo)
+  const voice = useVoiceOptions()
   const fileRef = useRef<HTMLInputElement>(null)
   const [message, setMessage] = useState<string | null>(null)
   const [resetOpen, setResetOpen] = useState(false)
@@ -74,8 +76,18 @@ export function SettingsScreen() {
         {settings.voice && (
           <Row
             title="Incoraggiamenti"
-            description="«Vai!», «Senza fretta» e simili a fine frase. Spento: solo nome, numeri e tecnica."
-            control={<Switch checked={settings.voiceCheers} onCheckedChange={(v) => setSetting('voiceCheers', v)} />}
+            description={
+              voice.packHasCheers
+                ? '«Vai!», «Senza fretta» e simili a fine frase. Spento: solo nome, numeri e tecnica.'
+                : 'La voce scelta è solo tecnica: non ha frasi di incoraggiamento.'
+            }
+            control={
+              <Switch
+                checked={voice.cheers}
+                disabled={!voice.packHasCheers}
+                onCheckedChange={(v) => setSetting('voiceCheers', v)}
+              />
+            }
           />
         )}
         {settings.voice && <VoiceSettings />}

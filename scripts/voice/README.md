@@ -35,3 +35,19 @@ python3 scripts/voice/generate.py --voce Kore      # registra solo i pezzi nuovi
 ```
 
 Cambiare voce riregistra tutto, per non mischiare due voci nella stessa sessione.
+
+## Più voci
+
+Ogni voce ha la sua cartella in `public/voce/<nome>/` e la sua voce in `src/data/voiceRecorded.json`. Nell'app si sceglie in Impostazioni; una voce compare solo quando tutte le sue frasi sono registrate.
+
+```bash
+python3 scripts/voice/generate.py --voce Schedar --neutro --gruppo 16   # voce neutra, solo tecnica
+```
+
+Con `--neutro` lo stile è da istruttore tecnico e le frasi di incoraggiamento non si registrano: nell'app quella voce dice solo nome, numeri e tecnica.
+
+Con lo stile neutro le pause dentro le frasi sono lunghe e il taglio sulle pause può sbagliare. `riallinea.py` rifà il taglio riconoscendo le parole (serve sherpa-onnx con un modello Whisper), usando l'audio intero rimasto in `scripts/voice/prova/`:
+
+```bash
+cd scripts/voice && python3 riallinea.py --voce Schedar --neutro --gruppo 16 --whisper <cartella del modello>
+```

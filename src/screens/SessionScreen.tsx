@@ -16,7 +16,7 @@ import { CATEGORIES, videoUrlFor } from '@/data/exercises'
 import { getSession } from '@/data/plan'
 import type { Entry, Exercise, Feeling } from '@/data/types'
 import { formatClock, formatDuration } from '@/lib/dates'
-import { useStats, useToday, useWakeLock } from '@/lib/hooks'
+import { useStats, useToday, useVoiceOptions, useWakeLock } from '@/lib/hooks'
 import { buildSteps, minDurationSec, targetLabel, workStepCount, type RestStep, type WorkStep } from '@/lib/session'
 import { nextTestWeek, testHistory, testRows } from '@/lib/fitnessTest'
 import { beep, vibrate } from '@/lib/signals'
@@ -205,16 +205,16 @@ function WorkView({
   const color = CATEGORIES[exercise.category].color
   const figureBig = useAppStore((s) => s.settings.figureBig)
   const setSetting = useAppStore((s) => s.setSetting)
-  const voiceOn = useAppStore((s) => s.settings.voice)
-  const voiceName = useAppStore((s) => s.settings.voiceName)
-  const phoneVoice = useVoiceStatus(voiceName)
-  const voiceMissing = !isRecorded(intro) && phoneVoice.kind === 'missing'
+  const voice = useVoiceOptions()
+  const voiceOn = voice.on
+  const phoneVoice = useVoiceStatus(voice.phoneVoice)
+  const voiceMissing = !isRecorded(intro, voice.pack) && phoneVoice.kind === 'missing'
 
   // All'inizio dell'esercizio la voce spiega cosa fare; si zittisce cambiando esercizio o in pausa.
   useEffect(() => {
-    if (voiceOn) say(intro, voiceName)
+    if (voiceOn) say(intro, voice.pack, voice.phoneVoice)
     return () => stopSpeaking()
-  }, [voiceOn, voiceName, intro])
+  }, [voiceOn, voice.pack, voice.phoneVoice, intro])
   useEffect(() => {
     if (paused) stopSpeaking()
   }, [paused])
@@ -436,14 +436,12 @@ function DoneView({ entry, exerciseCount }: { entry: Entry; exerciseCount: numbe
   const updateEntry = useAppStore((s) => s.updateEntry)
   const tests = current.type === 'test' ? testHistory(entries) : []
   const [noteOpen, setNoteOpen] = useState(false)
-  const voiceOn = useAppStore((s) => s.settings.voice)
-  const cheers = useAppStore((s) => s.settings.voiceCheers)
-  const voiceName = useAppStore((s) => s.settings.voiceName)
+  const voice = useVoiceOptions()
 
   useEffect(() => {
     // "Fatto! Ottimo lavoro" è un incoraggiamento: senza, a fine allenamento la voce tace
-    if (voiceOn && cheers) say(DONE, voiceName)
-  }, [voiceOn, cheers, voiceName])
+    if (voice.on && voice.cheers) say(DONE, voice.pack, voice.phoneVoice)
+  }, [voice.on, voice.cheers, voice.pack, voice.phoneVoice])
 
   useEffect(() => {
     const colors = ['#c5f82a', '#ff7a1a', '#ffffff']
@@ -558,7 +556,8 @@ export function SessionScreen() {
   const steps = useMemo(() => (session ? buildSteps(session, { mini }) : []), [session, mini])
   const index = Math.min(active?.stepIndex ?? 0, steps.length - 1)
   // Stesso oggetto finché non cambia passo: la voce parte una volta sola per esercizio.
-  const intro = useMemo(() => introAt(steps, index, settings.voiceCheers), [steps, index, settings.voiceCheers])
+  const cheers = useVoiceOptions().cheers
+  const intro = useMemo(() => introAt(steps, index, cheers), [steps, index, cheers])
 
   const running = active !== null && doneEntry === null
   useWakeLock(running)

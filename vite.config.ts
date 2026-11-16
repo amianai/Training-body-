@@ -40,7 +40,7 @@ export default defineConfig(({ mode }) => {
             workbox: {
               // Dei font basta il sottoinsieme latino: gli altri non vengono mai scaricati.
               // Le frasi registrate della voce guida servono anche senza internet.
-              globPatterns: ['**/*.{js,css,html,svg,png}', 'assets/*-latin-*.woff2', 'voce/*.mp3'],
+              globPatterns: ['**/*.{js,css,html,svg,png}', 'assets/*-latin-*.woff2', 'voce/**/*.mp3'],
               // Il promemoria serale: il service worker riceve la notifica e la mostra.
               importScripts: ['push-sw.js'],
               navigateFallbackDenylist: [/^\/api\//],

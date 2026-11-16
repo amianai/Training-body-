@@ -6,6 +6,7 @@ import { todayISO } from './dates'
 import { pushSupported, syncReminderState } from './push'
 import { reminderState } from './reminderState'
 import { computeStats } from './streak'
+import { recordedVoiceFor } from './voice'
 
 /** Data di oggi, aggiornata se l'app resta aperta a cavallo della mezzanotte. */
 export function useToday(): string {
@@ -81,4 +82,18 @@ export function useReminderSync() {
     }, 2000)
     return () => window.clearTimeout(timer)
   }, [reminders, entries, startDate, today, setSetting])
+}
+
+/** Come parla la guida: voce registrata scelta, incoraggiamenti sì o no, voce del telefono di riserva. */
+export function useVoiceOptions() {
+  const settings = useAppStore((s) => s.settings)
+  const choice = recordedVoiceFor(settings.voicePack)
+  return {
+    on: settings.voice,
+    pack: choice?.id ?? null,
+    /** Le voci "solo tecnica" non hanno le frasi di incoraggiamento registrate. */
+    cheers: settings.voiceCheers && (choice?.cheers ?? true),
+    packHasCheers: choice?.cheers ?? true,
+    phoneVoice: settings.voiceName,
+  }
 }

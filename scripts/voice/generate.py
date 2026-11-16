@@ -200,52 +200,68 @@ def to_mp3(wav_bytes: bytes, out: Path):
 def load_index():
     if INDEX.exists():
         return json.loads(INDEX.read_text())
-    return {'voice': None, 'model': None, 'clips': {}}
+    return {'voices': {}}
 
 
 def save_index(index):
     INDEX.write_text(json.dumps(index, ensure_ascii=False, indent=1) + '\n')
 
 
-def record(voice: str, model: str, group: int, pause: float, max_requests: int | None):
+def is_cheer(clip_id: str) -> bool:
+    """Frasi di solo incoraggiamento: una voce neutra non le registra."""
+    return clip_id.startswith(('calma-', 'forza-')) or clip_id == 'fatto'
+
+
+def record(voice: str, model: str, group: int, pause: float, max_requests: int | None, neutral: bool):
     clips = json.loads(CLIPS.read_text())
+    if neutral:
+        clips = [c for c in clips if not is_cheer(c['id'])]
     index = load_index()
-    if (index['voice'], index['model']) != (voice, model):
-        # Voce o modello nuovi: si registra tutto da capo, per non mischiare due voci.
-        index = {'voice': voice, 'model': model, 'clips': {}}
-    AUDIO.mkdir(parents=True, exist_ok=True)
+    pack_id = voice.lower()
+    pack = index['voices'].get(pack_id)
+    if not pack or (pack['voice'], pack['model'], pack['cheers']) != (voice, model, not neutral):
+        # Voce, modello o stile nuovi: si registra tutto da capo, per non mischiare due voci.
+        pack = {'voice': voice, 'model': model, 'cheers': not neutral, 'complete': False, 'clips': {}}
+        index['voices'][pack_id] = pack
+    audio_dir = AUDIO / pack_id
+    audio_dir.mkdir(parents=True, exist_ok=True)
 
     wanted = {c['id'] for c in clips}
-    for stale in set(index['clips']) - wanted:
-        del index['clips'][stale]
-        (AUDIO / f'{stale}.mp3').unlink(missing_ok=True)
-    save_index(index)
+    for stale in set(pack['clips']) - wanted:
+        del pack['clips'][stale]
+        (audio_dir / f'{stale}.mp3').unlink(missing_ok=True)
 
-    todo = [c for c in clips
-            if index['clips'].get(c['id']) != c['text'] or not (AUDIO / f"{c['id']}.mp3").exists()]
+    def missing():
+        return [c for c in clips
+                if pack['clips'].get(c['id']) != c['text'] or not (audio_dir / f"{c['id']}.mp3").exists()]
+
+    todo = missing()
+    pack['complete'] = not todo
+    save_index(index)
     # Gruppi con lo stesso tono: una richiesta legge tutto con lo stesso stile.
     groups = []
-    for calm in (False, True):
-        same = [c for c in todo if c['calm'] == calm]
+    for calm in ((None,) if neutral else (False, True)):
+        same = [c for c in todo if calm is None or c['calm'] == calm]
         groups += [same[i:i + group] for i in range(0, len(same), group)]
     groups = groups[:max_requests]
     print(f'{len(todo)} frasi da registrare con {voice} ({model}) in {len(groups)} richieste', flush=True)
     for g, batch in enumerate(groups, 1):
         print(f"[{g}/{len(groups)}] {', '.join(c['id'] for c in batch)}", flush=True)
         try:
-            audio = synthesize(SEPARATOR.join(c['text'] for c in batch), voice, batch[0]['calm'], model)
+            audio = synthesize(SEPARATOR.join(c['text'] for c in batch), voice, batch[0]['calm'], model, NEUTRO if neutral else None)
         except QuotaFinita as e:
             sys.exit(f'Quota gratuita finita: riprendi più tardi con lo stesso comando.\n{e}')
         # L'audio intero resta in prova/ (non va su git): se un taglio esce male si può rifare senza quota.
         PROVA.mkdir(parents=True, exist_ok=True)
-        (PROVA / f'gruppo-{batch[0]["id"]}.wav').write_bytes(audio)
+        (PROVA / f'gruppo-{pack_id}-{batch[0]["id"]}.wav').write_bytes(audio)
         for c, part in zip(batch, split(audio, [c['text'] for c in batch])):
-            to_mp3(part, AUDIO / f"{c['id']}.mp3")
-            index['clips'][c['id']] = c['text']
+            to_mp3(part, audio_dir / f"{c['id']}.mp3")
+            pack['clips'][c['id']] = c['text']
+        pack['complete'] = not missing()
         save_index(index)
         if g < len(groups):
             time.sleep(pause)
-    print('Fatto.')
+    print('Fatto: voce completa.' if pack['complete'] else f'Mancano ancora {len(missing())} frasi.')
 
 
 def audition(voices: list[str], model: str, pause: float, neutral: bool = False):
@@ -272,11 +288,11 @@ if __name__ == '__main__':
     p.add_argument('--gruppo', type=int, default=15, help='frasi lette in una sola richiesta')
     p.add_argument('--pausa', type=float, default=6, help='secondi tra una richiesta e l’altra')
     p.add_argument('--richieste', type=int, help='al massimo queste richieste (per provare)')
-    p.add_argument('--neutro', action='store_true', help='campioni con lo stile neutro, solo tecnica')
+    p.add_argument('--neutro', action='store_true', help='stile neutro, solo tecnica: niente frasi di incoraggiamento')
     a = p.parse_args()
     if a.prova is not None:
         audition(a.prova or PROVA_VOCI, a.modello, a.pausa, a.neutro)
     elif a.voce:
-        record(a.voce, a.modello, a.gruppo, a.pausa, a.richieste)
+        record(a.voce, a.modello, a.gruppo, a.pausa, a.richieste, a.neutro)
     else:
         p.print_help()

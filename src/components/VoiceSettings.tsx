@@ -2,7 +2,8 @@ import { Volume2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { getExercise } from '@/data/exercises'
-import { hasRecordings, italianVoices, recordedVoice, say, useVoiceStatus } from '@/lib/voice'
+import { useVoiceOptions } from '@/lib/hooks'
+import { hasRecordings, italianVoices, recordedVoices, say, useVoiceStatus } from '@/lib/voice'
 import { spokenIntro } from '@/lib/voiceScript'
 import { useAppStore } from '@/store/useAppStore'
 
@@ -13,12 +14,12 @@ const sample = (cheers: boolean) =>
 /** Quale voce usa la guida, prova della voce e cosa fare se il telefono non ne ha una italiana. */
 export function VoiceSettings() {
   const voiceName = useAppStore((s) => s.settings.voiceName)
-  const cheers = useAppStore((s) => s.settings.voiceCheers)
   const setSetting = useAppStore((s) => s.setSetting)
   const status = useVoiceStatus(voiceName)
+  const voice = useVoiceOptions()
 
   const tryButton = (
-    <Button variant="outline" size="lg" onClick={() => say(sample(cheers), voiceName)}>
+    <Button variant="outline" size="lg" onClick={() => say(sample(voice.cheers), voice.pack, voiceName)}>
       <Volume2 /> Prova la voce
     </Button>
   )
@@ -26,9 +27,24 @@ export function VoiceSettings() {
   if (hasRecordings) {
     return (
       <div className="flex flex-col gap-3 rounded-xl border bg-card p-4">
-        <p className="text-sm text-muted-foreground">
-          Voce registrata: <span className="text-foreground">{recordedVoice}</span>. Funziona anche senza internet.
-        </p>
+        <p className="text-sm text-muted-foreground">Voce registrata: funziona anche senza internet.</p>
+        {recordedVoices.length > 1 ? (
+          <select
+            id="voice-pack"
+            aria-label="Voce registrata"
+            value={voice.pack ?? ''}
+            onChange={(e) => setSetting('voicePack', e.target.value)}
+            className="h-11 rounded-md border border-input bg-background px-3 text-base"
+          >
+            {recordedVoices.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.name} · {v.cheers ? 'da allenatore' : 'neutra, solo tecnica'}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <p className="font-semibold">{recordedVoices[0].name}</p>
+        )}
         {tryButton}
       </div>
     )

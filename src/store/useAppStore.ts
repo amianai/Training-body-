@@ -24,6 +24,8 @@ export interface Settings {
   voice: boolean
   /** Voce italiana scelta (nome della voce del telefono); se manca, la più naturale. */
   voiceName: string | null
+  /** Voce registrata scelta (cartella in public/voce); se manca, la prima. */
+  voicePack: string | null
   /** La voce chiude con una frase di incoraggiamento; spento, dice solo nome, numeri e tecnica. */
   voiceCheers: boolean
   /** Promemoria serale con una notifica, solo quando serve. */
@@ -64,7 +66,7 @@ function initialState(): PersistedState {
     startDate: todayISO(),
     entries: [],
     active: null,
-    settings: { sound: false, vibration: false, figureBig: false, voice: true, voiceName: null, voiceCheers: true, reminders: false },
+    settings: { sound: false, vibration: false, figureBig: false, voice: true, voiceName: null, voicePack: null, voiceCheers: true, reminders: false },
     demo: null,
   }
 }
