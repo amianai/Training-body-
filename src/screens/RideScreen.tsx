@@ -10,7 +10,6 @@ import { COOLDOWN } from '@/data/plan'
 import type { BodyZone } from '@/data/types'
 import { addDays } from '@/lib/dates'
 import { useToday } from '@/lib/hooks'
-import { isActivity } from '@/lib/streak'
 import { buildSteps, estimateDurationSec } from '@/lib/session'
 import { cn } from '@/lib/utils'
 import { useAppStore } from '@/store/useAppStore'
@@ -33,12 +32,11 @@ function Chip({ selected, onClick, children }: { selected: boolean; onClick: () 
   )
 }
 
-/** Registra un giro in moto: conta come allenamento e tiene il diario della fatica. */
+/** Registra un giro in moto nel diario della fatica. Non conta come allenamento. */
 export function RideScreen() {
   const navigate = useNavigate()
   const today = useToday()
   const addEntry = useAppStore((s) => s.addEntry)
-  const entries = useAppStore((s) => s.entries)
   const startSession = useAppStore((s) => s.startSession)
   const busy = useAppStore((s) => s.active !== null)
   /** Giro salvato oggi: prima di tornare alla home si propone lo scarico. */
@@ -51,7 +49,6 @@ export function RideScreen() {
   const [note, setNote] = useState('')
 
   const date = day === 'oggi' ? today : addDays(today, -1)
-  const alreadyActive = entries.some((e) => e.date === date && isActivity(e))
 
   const save = () => {
     const pump = Number.parseInt(pumpAfter, 10)
@@ -65,7 +62,7 @@ export function RideScreen() {
         pumpAfterMin: Number.isFinite(pump) && pump > 0 ? pump : undefined,
       },
     })
-    const flash = alreadyActive ? 'Giro salvato nel diario.' : 'Giro salvato: conta come allenamento per la streak.'
+    const flash = 'Giro salvato nel diario.'
     // Lo scarico serve la sera del giro; per un giro di ieri è tardi.
     if (day === 'oggi' && !busy) setSavedFlash(flash)
     else navigate('/', { replace: true, state: { flash } })

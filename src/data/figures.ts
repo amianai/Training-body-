@@ -238,8 +238,19 @@ export const FIGURES: Record<string, FigureSpec> = {
     hold: [0.4, 0.7],
     move: 1.4,
     decor: [{ kind: 'bags' }],
-    view: 'Vista di fronte',
+    view: 'Vista di fronte · braccia un po’ in avanti',
     phases: ['Giù', 'Alza', 'Tieni', 'Scendi'],
+  },
+  p10: {
+    // Di fronte: le mani partono vicine davanti al petto e si aprono in linea retta fino ai lati.
+    frames: [
+      { root: [0.5, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [{ a: 87, b: 87, c: 0 }, { a: 93, b: 93, c: 180 }], arms: [{ target: [0.51, 0.12], bend: 1, c: 0 }, { target: [0.44, 0.12], bend: -1, c: 180 }] },
+      { root: [0.5, G - 0.02], anchor: 'ankle', torso: 270, neck: 270, legs: [{ a: 87, b: 87, c: 0 }, { a: 93, b: 93, c: 180 }], arms: [{ target: [0.76, 0.085], bend: 1, c: 0 }, { target: [0.19, 0.085], bend: -1, c: 180 }] },
+    ],
+    hold: [0.4, 0.7],
+    move: 1.2,
+    view: 'Vista di fronte',
+    phases: ['Chiuso', 'Apri', 'Tieni', 'Chiudi'],
   },
   e13: {
     frames: [
@@ -338,5 +349,15 @@ export const FIGURES: Record<string, FigureSpec> = {
     hold: [0, 0],
     move: 0.35,
     phases: ['Salta', 'Salta', 'Salta', 'Salta'],
+  },
+  f15: {
+    // Di lato: dal salto con le braccia in alto giù fino al plank, e ritorno.
+    frames: [
+      { root: [0.86, 0.36], anchor: 'hip', torso: 270, neck: 270, legs: [{ a: 90, b: 90, c: 180 }, { a: 90, b: 90, c: 180 }], arms: [{ a: 270, b: 270, c: 270 }, { a: 270, b: 270, c: 270 }] },
+      { root: [0.41, 0.658], anchor: 'hip', torso: 197, neck: 197, legs: [{ a: 17, b: 17, c: 95 }, { a: 17, b: 17, c: 95 }], arms: [{ a: 90, b: 90, c: 180 }, { a: 90, b: 90, c: 180 }] },
+    ],
+    hold: [0.25, 0.35],
+    move: 0.8,
+    phases: ['Salta', 'Giù', 'Plank', 'Su'],
   },
 }

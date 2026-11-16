@@ -5,7 +5,6 @@
   "cambia-lato": "Cambia lato: ora il destro.",
   "come-e1": "Piedi alla larghezza delle pedane, ginocchia morbide. Piegati all'anca, petto avanti, schiena dritta. Braccia avanti come sul manubrio, gomiti alti.",
   "come-e2": "Seduto o sdraiato, cuscino tra le ginocchia. Stringi forte e tieni.",
-  "come-e3": "Due borse o uno zaino pesante per mano. Cammina dritto, spalle basse, addome stretto.",
   "come-e4": "Asciugamano arrotolato, una mano accanto all'altra. Strizza come per farlo gocciolare, poi cambia verso.",
   "come-e11": "In piedi su una gamba, ginocchio morbido. Quando è facile chiudi gli occhi.",
   "come-e12": "Su una gamba, l’altra va indietro. Busto e gamba dietro scendono insieme, schiena dritta.",
@@ -25,12 +24,9 @@
   "giro-2": "Giro 2.",
   "giro-3": "Giro 3.",
   "giro-4": "Giro 4.",
-  "giro-5": "Giro 5.",
-  "giro-6": "Giro 6.",
   "lato-sinistro": "Lato sinistro.",
   "nome-e1": "Posizione d'attacco.",
   "nome-e2": "Stretta degli adduttori.",
-  "nome-e3": "Camminata del contadino.",
   "nome-e4": "Strizza l'asciugamano.",
   "nome-e11": "Appoggio su una gamba.",
   "nome-e12": "Stacco rumeno su una gamba.",
@@ -79,7 +75,7 @@
   "come-p4": "Schiena, sedere e nuca al muro, piedi un passo avanti. Braccia a W, con gomiti e dorso delle mani sul muro. Sali a Y senza staccare la schiena, poi scendi piano.",
   "come-p5": "Sdraiato, un asciugamano arrotolato sotto la schiena alta. Mani dietro la testa a sostenere il collo. Lasciati andare indietro e respira lento, senza inarcare i lombari.",
   "come-p6": "A quattro zampe, mani sotto le spalle e ginocchia sotto le anche. Allunga un braccio e la gamba opposta, in linea con la schiena, e tieni 3 secondi. Bacino fermo, collo lungo.",
-  "come-p8": "In piedi, una bottiglia d’acqua per mano, braccia lungo i fianchi. Alza le braccia ai lati fino alle spalle in 2 secondi, gomiti morbidi. Scendi in 3 secondi, spalle lontane dalle orecchie.",
+  "come-p8": "In piedi, busto appena inclinato in avanti, una bottiglia d’acqua per mano. Alza le braccia un po’ davanti ai fianchi, non del tutto di lato, fino alle spalle. Gomiti morbidi. Scendi in 3 secondi, spalle lontane dalle orecchie.",
   "come-s1": "Braccio teso davanti, palmo in su. Con l'altra mano tira indietro le dita. Tensione 5-6 su 10, mai dolore.",
   "come-s2": "Braccio teso davanti, palmo in giù. Piega il polso e tira il dorso della mano verso di te.",
   "come-s3": "Avambraccio sullo stipite, gomito all’altezza della spalla. Fai un passo avanti finché senti il petto.",
@@ -102,6 +98,10 @@
   "nome-s3": "Pettorali alla porta.",
   "nome-s5": "Flessori dell'anca.",
   "nome-s7": "Quadricipite in piedi.",
-  "nome-s8": "Polpacci al muro."
+  "nome-s8": "Polpacci al muro.",
+  "come-f15": "Mani a terra e porta i piedi indietro, fino al plank. Riporta i piedi vicino alle mani. Alzati e fai un piccolo salto con le braccia in alto. Vai al tuo ritmo.",
+  "nome-f15": "Burpee.",
+  "come-p10": "In piedi, elastico tra le mani, braccia tese davanti al petto. Apri le braccia tirando l’elastico verso il petto, le scapole si avvicinano. Torna piano, spalle basse.",
+  "nome-p10": "Apertura con elastico."
  }
 }

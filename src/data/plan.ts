@@ -46,13 +46,13 @@ const A: Session = {
       ],
     },
     {
-      title: 'Spalle e presa',
+      title: 'Spalle',
       rounds: 2,
       restBetweenItems: 15,
       restBetweenRounds: 45,
       items: [
         { exerciseId: 'p8', reps: 10 },
-        { exerciseId: 'e3', seconds: 30 },
+        { exerciseId: 'p10', reps: 10 },
       ],
     },
     {
@@ -140,10 +140,14 @@ const C: Session = {
   blocks: [
     {
       title: 'Cardio',
-      rounds: 5,
+      rounds: 3,
+      restBetweenItems: 20,
       restBetweenRounds: 30,
       restAfter: 30,
-      items: [{ exerciseId: 'f11', seconds: 30 }],
+      items: [
+        { exerciseId: 'f11', seconds: 30 },
+        { exerciseId: 'f15', seconds: 20 },
+      ],
     },
     {
       title: 'Circuito',
@@ -298,7 +302,6 @@ export const PRACTICE: Session = {
       items: [
         { exerciseId: 'e1', seconds: 8 },
         { exerciseId: 'e2', seconds: 8 },
-        { exerciseId: 'e3', seconds: 8 },
         { exerciseId: 'e4', seconds: 8 },
         { exerciseId: 'e11', seconds: 8 },
         { exerciseId: 'e12', reps: 3 },
@@ -317,6 +320,7 @@ export const PRACTICE: Session = {
         { exerciseId: 'p5', seconds: 8 },
         { exerciseId: 'p6', reps: 3 },
         { exerciseId: 'p8', reps: 3 },
+        { exerciseId: 'p10', reps: 3 },
       ],
     },
     {
@@ -331,6 +335,7 @@ export const PRACTICE: Session = {
         { exerciseId: 'f9', reps: 4 },
         { exerciseId: 'f13', reps: 4 },
         { exerciseId: 'f11', seconds: 8 },
+        { exerciseId: 'f15', seconds: 8 },
       ],
     },
   ],
@@ -338,7 +343,7 @@ export const PRACTICE: Session = {
 
 /**
  * Scarico dopo un giro in moto, la sera: avambracci induriti, schiena e anche. Non conta come
- * allenamento (conta già il giro) e non si salva.
+ * allenamento e non si salva.
  */
 export const COOLDOWN: Session = {
   id: 'scarico',

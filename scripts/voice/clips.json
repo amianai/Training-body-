@@ -30,11 +30,6 @@
   "calm": false
  },
  {
-  "id": "come-e3",
-  "text": "Due borse o uno zaino pesante per mano. Cammina dritto, spalle basse, addome stretto.",
-  "calm": false
- },
- {
   "id": "come-e4",
   "text": "Asciugamano arrotolato, una mano accanto all'altra. Strizza come per farlo gocciolare, poi cambia verso.",
   "calm": false
@@ -90,6 +85,11 @@
   "calm": false
  },
  {
+  "id": "come-f15",
+  "text": "Mani a terra e porta i piedi indietro, fino al plank. Riporta i piedi vicino alle mani. Alzati e fai un piccolo salto con le braccia in alto. Vai al tuo ritmo.",
+  "calm": false
+ },
+ {
   "id": "come-m1",
   "text": "Cerchi lenti e ampi con i polsi. Metà tempo in un senso, metà nell’altro.",
   "calm": true
@@ -141,7 +141,12 @@
  },
  {
   "id": "come-p8",
-  "text": "In piedi, una bottiglia d’acqua per mano, braccia lungo i fianchi. Alza le braccia ai lati fino alle spalle in 2 secondi, gomiti morbidi. Scendi in 3 secondi, spalle lontane dalle orecchie.",
+  "text": "In piedi, busto appena inclinato in avanti, una bottiglia d’acqua per mano. Alza le braccia un po’ davanti ai fianchi, non del tutto di lato, fino alle spalle. Gomiti morbidi. Scendi in 3 secondi, spalle lontane dalle orecchie.",
+  "calm": true
+ },
+ {
+  "id": "come-p10",
+  "text": "In piedi, elastico tra le mani, braccia tese davanti al petto. Apri le braccia tirando l’elastico verso il petto, le scapole si avvicinano. Torna piano, spalle basse.",
   "calm": true
  },
  {
@@ -215,16 +220,6 @@
   "calm": false
  },
  {
-  "id": "giro-5",
-  "text": "Giro 5.",
-  "calm": false
- },
- {
-  "id": "giro-6",
-  "text": "Giro 6.",
-  "calm": false
- },
- {
   "id": "lato-sinistro",
   "text": "Lato sinistro.",
   "calm": false
@@ -237,11 +232,6 @@
  {
   "id": "nome-e2",
   "text": "Stretta degli adduttori.",
-  "calm": false
- },
- {
-  "id": "nome-e3",
-  "text": "Camminata del contadino.",
   "calm": false
  },
  {
@@ -300,6 +290,11 @@
   "calm": false
  },
  {
+  "id": "nome-f15",
+  "text": "Burpee.",
+  "calm": false
+ },
+ {
   "id": "nome-m1",
   "text": "Mobilità dei polsi.",
   "calm": true
@@ -352,6 +347,11 @@
  {
   "id": "nome-p8",
   "text": "Alzate laterali con bottiglie.",
+  "calm": true
+ },
+ {
+  "id": "nome-p10",
+  "text": "Apertura con elastico.",
   "calm": true
  },
  {

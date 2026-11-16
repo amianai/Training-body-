@@ -106,12 +106,12 @@ describe('computeStats', () => {
     expect(stats.activeToday).toBe(true)
   })
 
-  it('un giro registrato prima dell\'inizio conta ma non sposta le settimane', () => {
+  it('un giro in moto è solo diario: non conta e non sposta le settimane', () => {
     // inizio lunedì 26, giro domenica 25
     const entries = [entry('ride', '2026-10-25'), entry('workout', '2026-10-26', 'a')]
     const stats = computeStats(entries, plan, START, '2026-10-26')
     expect(stats.phase.weekNumber).toBe(1)
-    expect(stats.streak).toBe(2)
+    expect(stats.streak).toBe(1)
     expect(stats.week.target).toBe(2)
   })
 

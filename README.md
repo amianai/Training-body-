@@ -18,7 +18,7 @@ Questa è la **v0**: un prototipo da usare per una settimana. Quello che non fun
   - spostare a un altro giorno, che non è saltare;
   - imprevisto, che usa il freeze;
   - "non mi va", che azzera la streak.
-- **Giro in moto**: conta come allenamento, con diario della fatica per zona e "dopo quanti minuti si induriscono gli avambracci".
+- **Giro in moto**: un diario, non conta come allenamento. Fatica per zona e "dopo quanti minuti si induriscono gli avambracci".
   Dopo un giro di oggi propone 7 minuti di **scarico** per avambracci, schiena e anche (facoltativo, non conta come allenamento).
 - **Test di forma**: alla settimana 1 e poi ogni 4 (5, 9, 13…) prende il posto di un allenamento. Quattro prove al massimo: flessioni, rematore al tavolo, plank, sedia al muro.
   In home, "I tuoi numeri" mostra gli ultimi risultati, i miglioramenti dal primo test e gli avambracci in moto. La logica è in `src/lib/fitnessTest.ts`.
@@ -33,7 +33,8 @@ Questa è la **v0**: un prototipo da usare per una settimana. Quello che non fun
 - Ogni settimana (lunedì-domenica) ha un obiettivo, preso dalla fase della scheda. Se a fine settimana allenamenti + freeze sono meno dell'obiettivo, la streak si azzera.
 - **1 freeze a settimana**, non si accumula, vale solo per gli imprevisti.
 - Saltare perché "non mi va" azzera subito la streak.
-- Giro in moto e versione mini contano come allenamento. Al massimo un allenamento al giorno.
+- La versione mini e il test contano come allenamento; il giro in moto no (è solo un diario).
+- Una sessione finita in meno della metà del tempo previsto non conta: l'app chiede se ricominciare o uscire senza salvare. Al massimo un allenamento al giorno.
 
 La logica è in `src/lib/streak.ts`, con i test in `src/lib/streak.test.ts`.
 

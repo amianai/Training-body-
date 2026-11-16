@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import type { Session } from '@/data/types'
-import { buildSteps, estimateDurationSec, workStepCount } from './session'
+import { getSession } from '@/data/plan'
+import { buildSteps, estimateDurationSec, minDurationSec, workStepCount } from './session'
 
 const session: Session = {
   id: 'x',
@@ -66,5 +67,20 @@ describe('buildSteps', () => {
     const full = estimateDurationSec(buildSteps(session))
     expect(mini).toBeGreaterThan(0)
     expect(full).toBeGreaterThan(mini)
+  })
+})
+
+describe('minDurationSec', () => {
+  it('una sessione conta solo sopra la metà della durata prevista', () => {
+    const steps = buildSteps(getSession('a1')!)
+    expect(minDurationSec(steps)).toBe(Math.round(estimateDurationSec(steps) / 2))
+    // saltare tutto in 24 secondi non basta, un allenamento vero sì
+    expect(24).toBeLessThan(minDurationSec(steps))
+    expect(20 * 60).toBeGreaterThan(minDurationSec(steps))
+  })
+
+  it('la versione mini ha un minimo più basso', () => {
+    const session = getSession('a1')!
+    expect(minDurationSec(buildSteps(session, { mini: true }))).toBeLessThan(minDurationSec(buildSteps(session)))
   })
 })

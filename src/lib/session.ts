@@ -106,6 +106,14 @@ export function estimateDurationSec(steps: Step[]): number {
   }, 0)
 }
 
+/** Sotto questa parte della durata prevista la sessione è stata saltata, non fatta. */
+const MIN_SHARE = 0.5
+
+/** Durata minima perché una sessione conti come allenamento. */
+export function minDurationSec(steps: Step[]): number {
+  return Math.round(estimateDurationSec(steps) * MIN_SHARE)
+}
+
 export function workStepCount(steps: Step[]): number {
   return steps.filter((s) => s.kind === 'work').length
 }

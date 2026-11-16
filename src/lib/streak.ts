@@ -11,10 +11,11 @@ import { flameStageFor } from './flame'
  * - 1 freeze a settimana, non si accumula, vale solo per un imprevisto;
  * - saltare perché "non mi va" azzera la streak subito;
  * - spostare un allenamento a un altro giorno della stessa settimana non è saltare.
- * Un giro in moto, la versione mini e il test di forma contano come allenamento. Al massimo un allenamento al giorno.
+ * La versione mini e il test di forma contano come allenamento. Al massimo un allenamento al giorno.
+ * Il giro in moto è solo un diario: non conta per la settimana né per la streak.
  */
 
-const ACTIVITY_TYPES: ReadonlySet<EntryType> = new Set(['workout', 'mini', 'ride', 'test'])
+const ACTIVITY_TYPES: ReadonlySet<EntryType> = new Set(['workout', 'mini', 'test'])
 
 export function isActivity(entry: Entry): boolean {
   return ACTIVITY_TYPES.has(entry.type)

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import confetti from 'canvas-confetti'
-import { Check, Flame, Info, Maximize2, Pause, Play, Plus, SkipBack, SkipForward, Square, X } from 'lucide-react'
+import { Check, CirclePlay, Flame, Info, Maximize2, Pause, Play, Plus, SkipBack, SkipForward, Square, X } from 'lucide-react'
 import { Navigate, useBlocker, useNavigate } from 'react-router'
 
 import { CategoryBadge } from '@/components/CategoryBadge'
@@ -12,12 +12,12 @@ import { VoiceToggle } from '@/components/VoiceToggle'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Textarea } from '@/components/ui/textarea'
-import { CATEGORIES } from '@/data/exercises'
+import { CATEGORIES, videoUrlFor } from '@/data/exercises'
 import { getSession } from '@/data/plan'
 import type { Entry, Exercise, Feeling } from '@/data/types'
 import { formatClock, formatDuration } from '@/lib/dates'
 import { useStats, useToday, useWakeLock } from '@/lib/hooks'
-import { buildSteps, targetLabel, workStepCount, type RestStep, type WorkStep } from '@/lib/session'
+import { buildSteps, minDurationSec, targetLabel, workStepCount, type RestStep, type WorkStep } from '@/lib/session'
 import { nextTestWeek, testHistory, testRows } from '@/lib/fitnessTest'
 import { beep, vibrate } from '@/lib/signals'
 import { cn } from '@/lib/utils'
@@ -59,6 +59,17 @@ function useCountdown(totalSec: number, paused: boolean, onEnd: () => void) {
   }
 
   return { remainingSec: remainingMs / 1000, progress: 1 - remainingMs / (totalSec * 1000), addSeconds }
+}
+
+/** Vero mentre l'app non è in primo piano (per esempio mentre guardi il video dell'esercizio): i timer si fermano. */
+function usePageHidden() {
+  const [hidden, setHidden] = useState(() => document.visibilityState === 'hidden')
+  useEffect(() => {
+    const update = () => setHidden(document.visibilityState === 'hidden')
+    document.addEventListener('visibilitychange', update)
+    return () => document.removeEventListener('visibilitychange', update)
+  }, [])
+  return hidden
 }
 
 /** Cronometro che sale (prove a tempo del test), basato sull'orario come il conto alla rovescia. */
@@ -141,6 +152,25 @@ function BigNumber({
     >
       {children}
     </div>
+  )
+}
+
+/** Apre il video dell'esercizio su YouTube. Mentre lo guardi l'app è in secondo piano e i timer si fermano. */
+function VideoLink({ exercise, className }: { exercise: Exercise; className?: string }) {
+  return (
+    <a
+      href={videoUrlFor(exercise)}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`Video di ${exercise.name}`}
+      className={cn(
+        'flex shrink-0 items-center justify-center gap-1 rounded-xl border bg-card font-semibold text-muted-foreground active:bg-secondary',
+        className,
+      )}
+    >
+      <CirclePlay className="size-6 text-primary" />
+      Video
+    </a>
   )
 }
 
@@ -282,20 +312,23 @@ function WorkView({
             </div>
           </div>
 
-          <button
-            className="mb-4 flex items-start gap-3 rounded-xl border bg-card p-3 text-left"
-            onClick={() => onInfo(exercise)}
-          >
-            <div className="flex-1 space-y-1.5 text-sm">
-              <ul className="space-y-0.5 text-muted-foreground">
-                {exercise.cues.slice(0, 2).map((cue) => (
-                  <li key={cue}>· {cue}</li>
-                ))}
-              </ul>
-              {exercise.why && <p className="text-accent">{exercise.why}</p>}
-            </div>
-            <Info className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
-          </button>
+          <div className="mb-4 flex items-stretch gap-2">
+            <button
+              className="flex min-w-0 flex-1 items-start gap-3 rounded-xl border bg-card p-3 text-left"
+              onClick={() => onInfo(exercise)}
+            >
+              <div className="flex-1 space-y-1.5 text-sm">
+                <ul className="space-y-0.5 text-muted-foreground">
+                  {exercise.cues.slice(0, 2).map((cue) => (
+                    <li key={cue}>· {cue}</li>
+                  ))}
+                </ul>
+                {exercise.why && <p className="text-accent">{exercise.why}</p>}
+              </div>
+              <Info className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
+            </button>
+            <VideoLink exercise={exercise} className="w-16 flex-col text-xs" />
+          </div>
 
           {step.max ? (
             <Button
@@ -358,10 +391,13 @@ function RestView({
             <CategoryBadge category={next.exercise.category} />
           </div>
           <p className="mt-2 font-display text-3xl leading-none font-bold uppercase">{next.exercise.name}</p>
-          <p className="mt-1 text-muted-foreground">
-            {targetLabel(next)}
-            {next.side && ` · lato ${next.side}`}
-          </p>
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <p className="text-muted-foreground">
+              {targetLabel(next)}
+              {next.side && ` · lato ${next.side}`}
+            </p>
+            <VideoLink exercise={next.exercise} className="h-11 px-3 text-sm" />
+          </div>
           <ExerciseFigure
             exerciseId={next.exercise.id}
             variant="coach"
@@ -510,6 +546,9 @@ export function SessionScreen() {
   const [userPaused, setUserPaused] = useState(false)
   const [info, setInfo] = useState<Exercise | null>(null)
   const [practiceDone, setPracticeDone] = useState(false)
+  /** Sessione finita in troppo poco tempo per contare: si chiede cosa fare. */
+  const [tooFast, setTooFast] = useState<number | null>(null)
+  const hidden = usePageHidden()
   const leavingRef = useRef(false)
 
   const session = active ? getSession(active.sessionId) : undefined
@@ -541,7 +580,7 @@ export function SessionScreen() {
   const totalWork = workStepCount(steps)
   const doneWork = steps.slice(0, index).filter((s) => s.kind === 'work').length
   const nextWork = steps.slice(index + 1).find((s): s is WorkStep => s.kind === 'work')
-  const paused = userPaused || exitDialogOpen || info !== null
+  const paused = userPaused || exitDialogOpen || info !== null || tooFast !== null || hidden
   const lastTest = session.test ? testHistory(entries).at(-1) : undefined
 
   const signal = (times: number) => {
@@ -571,9 +610,20 @@ export function SessionScreen() {
     clearActive()
   }
 
+  /** Esce senza salvare niente e torna alla home con un messaggio. */
+  const discard = (flash: string) => {
+    leavingRef.current = true
+    setPracticeDone(true)
+    clearActive()
+    navigate('/', { replace: true, state: { flash } })
+  }
+
   const goTo = (i: number) => {
     setUserPaused(false)
-    if (i >= steps.length) finish()
+    const elapsed = Math.round((Date.now() - active.startedAt) / 1000)
+    // Saltando tutto in pochi secondi l'allenamento non conta per la streak.
+    if (i >= steps.length && !session.practice && elapsed < minDurationSec(steps)) setTooFast(elapsed)
+    else if (i >= steps.length) finish()
     else setStepIndex(Math.max(0, i))
   }
 
@@ -645,6 +695,19 @@ export function SessionScreen() {
       )}
 
       <ExerciseSheet exercise={info} onOpenChange={(open) => !open && setInfo(null)} />
+      <ConfirmDialog
+        open={tooFast !== null}
+        onOpenChange={(open) => {
+          if (open) return
+          setTooFast(null)
+          setStepIndex(0)
+        }}
+        title="Troppo veloce per contare"
+        description={`Hai finito in ${formatDuration(tooFast ?? 0)}: per contare come allenamento servono almeno ${formatDuration(minDurationSec(steps))}. Puoi ricominciare, oppure uscire senza salvarlo.`}
+        cancelLabel="Ricomincia dall'inizio"
+        confirmLabel="Esci senza salvare"
+        onConfirm={() => discard('Allenamento non salvato: era troppo breve per contare.')}
+      />
       <ConfirmDialog
         open={exitDialogOpen}
         onOpenChange={(open) => !open && closeExitDialog()}

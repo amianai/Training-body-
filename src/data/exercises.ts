@@ -260,9 +260,19 @@ export const EXERCISES: Exercise[] = [
     nameEn: 'Lateral raise',
     category: 'postura',
     kind: 'reps',
-    cues: ['In piedi, una bottiglia d’acqua per mano, braccia lungo i fianchi', 'Alza le braccia ai lati fino alle spalle in 2 secondi, gomiti morbidi', 'Scendi in 3 secondi, spalle lontane dalle orecchie'],
+    cues: ['In piedi, busto appena inclinato in avanti, una bottiglia d’acqua per mano', 'Alza le braccia un po’ davanti ai fianchi, non del tutto di lato, fino alle spalle', 'Gomiti morbidi. Scendi in 3 secondi, spalle lontane dalle orecchie'],
     why: 'Rinforza spalle e trapezio: allenare proprio i muscoli che fanno male ha ridotto il dolore negli impiegati.',
     equipment: 'Due bottiglie d’acqua',
+  },
+  {
+    id: 'p10',
+    name: 'Apertura con elastico',
+    nameEn: 'Band pull-apart',
+    category: 'postura',
+    kind: 'reps',
+    cues: ['In piedi, elastico tra le mani, braccia tese davanti al petto', 'Apri le braccia tirando l’elastico verso il petto, le scapole si avvicinano', 'Torna piano, spalle basse'],
+    why: 'Rinforza la schiena alta e il retro delle spalle: il contrario della posizione da scrivania, e tiene i gomiti alti in moto.',
+    equipment: 'Un elastico ad anello',
   },
 
   // Flex
@@ -331,6 +341,15 @@ export const EXERCISES: Exercise[] = [
     kind: 'time',
     cues: ['Salta aprendo gambe e braccia, poi chiudi', 'Ritmo costante, respira'],
     why: 'Cardio: in moto il cuore lavora parecchio. Poi lo sostituiamo con la corda.',
+  },
+  {
+    id: 'f15',
+    name: 'Burpee',
+    nameEn: 'Burpee',
+    category: 'flex',
+    kind: 'time',
+    cues: ['Mani a terra e porta i piedi indietro, fino al plank', 'Riporta i piedi vicino alle mani', 'Alzati e fai un piccolo salto con le braccia in alto. Vai al tuo ritmo'],
+    why: 'Cardio per tutto il corpo: fiato e gambe per reggere i tratti lunghi.',
   },
 ]
 
