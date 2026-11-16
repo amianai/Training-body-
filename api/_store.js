@@ -3,8 +3,14 @@ import { generateVAPIDKeys, sendNotification } from 'web-push'
 // Memoria del promemoria: un database Redis di Upstash collegato al progetto da Vercel (Storage).
 // Ci stanno le chiavi per firmare le notifiche e, per ogni telefono, dove mandarle e lo stato della settimana.
 
-const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL
-const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
+// Vercel sceglie il nome delle variabili in base al prefisso dato al collegamento (KV, STORAGE, UPSTASH_REDIS…):
+// si cerca per finale del nome, così funziona con qualsiasi prefisso.
+function findEnv(pattern, env = process.env) {
+  const name = Object.keys(env).sort().find((key) => pattern.test(key) && !/READ_ONLY/.test(key) && env[key])
+  return name ? env[name] : undefined
+}
+const url = findEnv(/(^|_)REST(_API)?_URL$/)
+const token = findEnv(/(^|_)REST(_API)?_TOKEN$/)
 export const storeConfigured = Boolean(url && token)
 
 const KEYS = 'allenamento:vapid'
