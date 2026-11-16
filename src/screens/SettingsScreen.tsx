@@ -2,6 +2,7 @@ import { useRef, useState, type ReactNode } from 'react'
 import { Download, FlaskConical, Trash2, Upload } from 'lucide-react'
 
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { ReminderSettings } from '@/components/ReminderSettings'
 import { ScreenHeader } from '@/components/ScreenHeader'
 import { VoiceSettings } from '@/components/VoiceSettings'
 import { Button } from '@/components/ui/button'
@@ -79,6 +80,8 @@ export function SettingsScreen() {
           Lo schermo resta acceso durante l'allenamento, così lo vedi da lontano.
         </p>
       </section>
+
+      <ReminderSettings />
 
       <section className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold text-muted-foreground uppercase">Dati di esempio</h2>

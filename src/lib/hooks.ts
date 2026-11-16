@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { PLAN } from '@/data/plan'
 import { useAppStore } from '@/store/useAppStore'
 import { todayISO } from './dates'
+import { pushSupported, syncReminderState } from './push'
+import { reminderState } from './reminderState'
 import { computeStats } from './streak'
 
 /** Data di oggi, aggiornata se l'app resta aperta a cavallo della mezzanotte. */
@@ -57,4 +59,26 @@ export function useWakeLock(active: boolean) {
       void sentinel?.release()
     }
   }, [active])
+}
+
+/** Con il promemoria acceso, tiene aggiornato il server sullo stato della settimana. */
+export function useReminderSync() {
+  const reminders = useAppStore((s) => s.settings.reminders)
+  const setSetting = useAppStore((s) => s.setSetting)
+  const entries = useAppStore((s) => s.entries)
+  const startDate = useAppStore((s) => s.startDate)
+  const today = useToday()
+
+  useEffect(() => {
+    if (!reminders || !pushSupported) return
+    const state = reminderState(entries, PLAN, startDate, today)
+    // un attimo di attesa: dopo un allenamento arrivano più modifiche di fila
+    const timer = window.setTimeout(() => {
+      void syncReminderState(state).then((result) => {
+        // il server non conosce più questo telefono: l'interruttore torna spento
+        if (result === 'not-subscribed') setSetting('reminders', false)
+      })
+    }, 2000)
+    return () => window.clearTimeout(timer)
+  }, [reminders, entries, startDate, today, setSetting])
 }

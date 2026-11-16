@@ -24,6 +24,8 @@ export interface Settings {
   voice: boolean
   /** Voce italiana scelta (nome della voce del telefono); se manca, la più naturale. */
   voiceName: string | null
+  /** Promemoria serale con una notifica, solo quando serve. */
+  reminders: boolean
 }
 
 interface PersistedState {
@@ -60,7 +62,7 @@ function initialState(): PersistedState {
     startDate: todayISO(),
     entries: [],
     active: null,
-    settings: { sound: false, vibration: false, figureBig: false, voice: true, voiceName: null },
+    settings: { sound: false, vibration: false, figureBig: false, voice: true, voiceName: null, reminders: false },
     demo: null,
   }
 }
@@ -106,13 +108,14 @@ export const useAppStore = create<AppState>()(
 
       importBackup: (data) => {
         if (!isBackup(data)) return false
-        set({
+        set((s) => ({
           startDate: data.startDate,
           entries: data.entries,
-          settings: { ...initialState().settings, ...data.settings },
+          // il promemoria è legato all'iscrizione di questo telefono: un backup non lo cambia
+          settings: { ...initialState().settings, ...data.settings, reminders: s.settings.reminders },
           active: null,
           demo: null,
-        })
+        }))
         return true
       },
       resetAll: () => set(initialState()),

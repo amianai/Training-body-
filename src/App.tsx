@@ -1,6 +1,7 @@
 import { createHashRouter, createMemoryRouter, RouterProvider, type RouteObject } from 'react-router'
 
 import { TabsLayout } from '@/components/BottomNav'
+import { useReminderSync } from '@/lib/hooks'
 import { HistoryScreen } from '@/screens/HistoryScreen'
 import { HomeScreen } from '@/screens/HomeScreen'
 import { PlanScreen } from '@/screens/PlanScreen'
@@ -28,5 +29,6 @@ const router =
   import.meta.env.MODE === 'artifact' ? createMemoryRouter(routes) : createHashRouter(routes)
 
 export default function App() {
+  useReminderSync()
   return <RouterProvider router={router} />
 }
