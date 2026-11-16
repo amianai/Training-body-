@@ -270,9 +270,9 @@ export const EXERCISES: Exercise[] = [
     nameEn: 'Band pull-apart',
     category: 'postura',
     kind: 'reps',
-    cues: ['In piedi, elastico tra le mani, braccia tese davanti al petto', 'Apri le braccia tirando l’elastico verso il petto, le scapole si avvicinano', 'Torna piano, spalle basse'],
+    cues: ['In piedi, fascia elastica lunga tra le mani, larghe quanto le spalle, braccia tese davanti al petto', 'Apri le braccia tirando la fascia verso il petto, le scapole si avvicinano', 'Torna piano, spalle basse. Con le mani più vicine è più duro'],
     why: 'Rinforza la schiena alta e il retro delle spalle: il contrario della posizione da scrivania, e tiene i gomiti alti in moto.',
-    equipment: 'Un elastico ad anello',
+    equipment: 'La fascia elastica lunga',
   },
 
   // Flex

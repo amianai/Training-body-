@@ -112,6 +112,8 @@ def split(wav_bytes: bytes, texts: list[str]) -> list[bytes]:
     dovrebbe finire ogni frase, stimato dalla sua lunghezza: una pausa lunga dentro una frase o un
     respiro dentro la pausa non spostano le frasi.
     """
+    if len(texts) == 1:
+        return [wav_bytes]
     rate, samples = pcm(wav_bytes)
     hop = rate // 100  # 10 ms
     loud = [max(abs(s) for s in samples[i:i + hop]) > 900 for i in range(0, len(samples), hop)]
