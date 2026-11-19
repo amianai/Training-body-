@@ -93,9 +93,20 @@ def main():
     order = [c for c in clips.values() if not (a.neutro and g.is_cheer(c['id']))]
     for wav_path in sorted(g.PROVA.glob(f'gruppo-{pack_id}-*.wav')):
         first = wav_path.stem.removeprefix(f'gruppo-{pack_id}-')
-        start = next(i for i, c in enumerate(order) if c['id'] == first)
-        # il gruppo: dalla prima frase in poi, solo frasi di questo stile, quante ne stanno in una richiesta
-        same = [c for c in order[start:] if a.neutro or c['calm'] == order[start]['calm']]
+        listed = wav_path.with_suffix('.json')
+        if listed.exists():
+            # generate.py ha scritto quali frasi ha mandato in questa richiesta
+            same = [clips[i] for i in json.loads(listed.read_text()) if i in clips]
+        else:
+            # audio vecchio, senza elenco: dalla prima frase in poi, solo frasi di questo stile
+            start = next((i for i, c in enumerate(order) if c['id'] == first), None)
+            if start is None:
+                print(f'{wav_path.name}: la frase {first} non c\'è più, salto')
+                continue
+            same = [c for c in order[start:] if a.neutro or c['calm'] == order[start]['calm']]
+        if any(pack['clips'].get(c['id']) not in (None, c['text']) for c in same):
+            print(f'{wav_path.name}: alcune frasi sono cambiate dopo la registrazione, salto')
+            continue
         rate, samples = g.pcm(wav_path.read_bytes())
         segs = segments(samples, rate)
         heard = [norm(transcribe(samples[s:e], rate)) for s, e in segs]
@@ -126,6 +137,7 @@ def main():
             pack['clips'][c['id']] = c['text']
             if r < 0.8:
                 print(f"  da riascoltare ({r:.2f}) {c['id']}: {''.join(heard[x:y])}")
+    pack['complete'] = all(c['id'] in pack['clips'] and pack['clips'][c['id']] == c['text'] for c in order)
     g.save_index(index)
 
 

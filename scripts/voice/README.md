@@ -51,3 +51,6 @@ Con lo stile neutro le pause dentro le frasi sono lunghe e il taglio sulle pause
 ```bash
 cd scripts/voice && python3 riallinea.py --voce Schedar --neutro --gruppo 16 --whisper <cartella del modello>
 ```
+
+Accanto a ogni audio di gruppo `generate.py` salva un `.json` con le frasi lette in quella richiesta, così `riallinea.py` sa esattamente cosa c'è dentro.
+Per controllare i pezzi con Whisper conviene aggiungere un po' di silenzio prima e dopo: sui pezzi tagliati stretti Whisper perde l'ultima parola anche quando nell'audio c'è.

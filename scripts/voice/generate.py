@@ -254,6 +254,8 @@ def record(voice: str, model: str, group: int, pause: float, max_requests: int |
         # L'audio intero resta in prova/ (non va su git): se un taglio esce male si può rifare senza quota.
         PROVA.mkdir(parents=True, exist_ok=True)
         (PROVA / f'gruppo-{pack_id}-{batch[0]["id"]}.wav').write_bytes(audio)
+        # quali frasi ci sono in questo audio, per poterlo ritagliare dopo con riallinea.py
+        (PROVA / f'gruppo-{pack_id}-{batch[0]["id"]}.json').write_text(json.dumps([c['id'] for c in batch]))
         for c, part in zip(batch, split(audio, [c['text'] for c in batch])):
             to_mp3(part, audio_dir / f"{c['id']}.mp3")
             pack['clips'][c['id']] = c['text']
